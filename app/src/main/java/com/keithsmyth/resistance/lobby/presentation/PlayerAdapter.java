@@ -36,6 +36,12 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
         return items.size();
     }
 
+    public void setItems(List<PlayerViewModel> items) {
+        this.items.clear();
+        this.items.addAll(items);
+        notifyDataSetChanged();
+    }
+
     public void addItem(PlayerViewModel item) {
         items.add(item);
         notifyItemInserted(items.size() - 1);

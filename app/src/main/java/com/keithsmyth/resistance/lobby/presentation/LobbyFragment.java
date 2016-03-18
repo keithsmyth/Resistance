@@ -95,6 +95,11 @@ public class LobbyFragment extends Fragment implements LobbyView {
     }
 
     @Override
+    public void setPlayers(List<PlayerViewModel> playerViewModels) {
+        playerAdapter.setItems(playerViewModels);
+    }
+
+    @Override
     public void addPlayer(PlayerViewModel playerViewModel) {
         playerAdapter.addItem(playerViewModel);
     }

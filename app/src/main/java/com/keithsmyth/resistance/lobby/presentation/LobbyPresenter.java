@@ -24,6 +24,8 @@ public class LobbyPresenter implements Presenter<LobbyView> {
 
     private final AddPlayerUseCase addPlayerUseCase;
     private final SelectCharactersUseCase selectCharactersUseCase;
+    private final List<PlayerViewModel> playerViewModels;
+    private final List<CharacterViewModel> characterViewModels;
     private final Set<CharacterViewModel> selectedCharacterSet;
 
     private LobbyView lobbyView;
@@ -32,36 +34,48 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     public LobbyPresenter(AddPlayerUseCase addPlayerUseCase, SelectCharactersUseCase selectCharactersUseCase) {
         this.addPlayerUseCase = addPlayerUseCase;
         this.selectCharactersUseCase = selectCharactersUseCase;
+        playerViewModels = new ArrayList<>();
+        characterViewModels=  new ArrayList<>();
         selectedCharacterSet = new HashSet<>();
     }
 
     @Override
     public void attachView(final LobbyView lobbyView) {
         this.lobbyView = lobbyView;
-        subscription = addPlayerUseCase.execute()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Action1<PlayerViewModel>() {
-                @Override
-                public void call(PlayerViewModel playerViewModel) {
-                    onPlayerAdded(playerViewModel);
-                }
-            }, new Action1<Throwable>() {
-                @Override
-                public void call(Throwable throwable) {
-                    lobbyView.showError(throwable.getMessage());
-                }
-            });
+        if (playerViewModels.isEmpty()) {
+            RxUtil.unsubscribe(subscription);
+            subscription = addPlayerUseCase.execute()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<PlayerViewModel>() {
+                    @Override
+                    public void call(PlayerViewModel playerViewModel) {
+                        onPlayerAdded(playerViewModel);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        if (lobbyView != null) {
+                            lobbyView.showError(throwable.getMessage());
+                        }
+                    }
+                });
+        } else {
+            lobbyView.setPlayers(playerViewModels);
+            if (!characterViewModels.isEmpty()) {
+                lobbyView.showCharacters(characterViewModels);
+            }
+        }
     }
 
     @Override
     public void detachView() {
-        RxUtil.unsubscribe(subscription);
         lobbyView = null;
     }
 
     @Override
     public void onDestroyed() {
         detachView();
+        RxUtil.unsubscribe(subscription);
     }
 
     public boolean isCharacterSelected(CharacterViewModel characterViewModel) {
@@ -101,9 +115,15 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     }
 
     private void onPlayerAdded(PlayerViewModel playerViewModel) {
+        playerViewModels.add(playerViewModel);
+        if (lobbyView == null) {
+            return;
+        }
         lobbyView.addPlayer(playerViewModel);
         if (playerViewModel.isMe) {
-            lobbyView.showCharacters(selectCharactersUseCase.getCharacters());
+            characterViewModels.clear();
+            characterViewModels.addAll(selectCharactersUseCase.getCharacters());
+            lobbyView.showCharacters(characterViewModels);
         }
     }
 
