@@ -6,10 +6,10 @@ import com.keithsmyth.resistance.PresenterFactory;
 import com.keithsmyth.resistance.RxUtil;
 import com.keithsmyth.resistance.lobby.domain.AddPlayerUseCase;
 import com.keithsmyth.resistance.lobby.domain.SelectCharactersUseCase;
-import com.keithsmyth.resistance.lobby.exception.NumberPlayersException;
-import com.keithsmyth.resistance.lobby.exception.NumberCharactersException;
 import com.keithsmyth.resistance.lobby.model.CharacterViewModel;
 import com.keithsmyth.resistance.lobby.model.PlayerViewModel;
+import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
+import com.keithsmyth.resistance.navigation.Navigation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,8 +22,10 @@ import rx.functions.Action1;
 
 public class LobbyPresenter implements Presenter<LobbyView> {
 
+    private final Navigation navigation;
     private final AddPlayerUseCase addPlayerUseCase;
     private final SelectCharactersUseCase selectCharactersUseCase;
+
     private final List<PlayerViewModel> playerViewModels;
     private final List<CharacterViewModel> characterViewModels;
     private final Set<CharacterViewModel> selectedCharacterSet;
@@ -31,7 +33,8 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     private LobbyView lobbyView;
     private Subscription subscription;
 
-    public LobbyPresenter(AddPlayerUseCase addPlayerUseCase, SelectCharactersUseCase selectCharactersUseCase) {
+    public LobbyPresenter(Navigation navigation, AddPlayerUseCase addPlayerUseCase, SelectCharactersUseCase selectCharactersUseCase) {
+        this.navigation = navigation;
         this.addPlayerUseCase = addPlayerUseCase;
         this.selectCharactersUseCase = selectCharactersUseCase;
         playerViewModels = new ArrayList<>();
@@ -54,9 +57,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        if (lobbyView != null) {
-                            lobbyView.showError(throwable.getMessage());
-                        }
+                        navigation.showError(new GenericDisplayThrowable(throwable));
                     }
                 });
         } else {
@@ -90,28 +91,9 @@ public class LobbyPresenter implements Presenter<LobbyView> {
         }
     }
 
-    public void startGame(final int numberOfPlayers) {
+    public void startGame() {
         final List<CharacterViewModel> selectedCharacters = new ArrayList<>(selectedCharacterSet);
-        RxUtil.unsubscribe(subscription);
-        subscription = selectCharactersUseCase.selectCharacters(selectedCharacters, numberOfPlayers)
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Action1<Integer>() {
-                @Override
-                public void call(Integer gameId) {
-                    lobbyView.openGameRoom(gameId);
-                }
-            }, new Action1<Throwable>() {
-                @Override
-                public void call(Throwable throwable) {
-                    if (throwable instanceof NumberPlayersException) {
-                        lobbyView.showNumberPlayersError((NumberPlayersException) throwable);
-                    } else if (throwable instanceof NumberCharactersException) {
-                        lobbyView.showSelectCharactersError((NumberCharactersException) throwable);
-                    } else {
-                        lobbyView.showError(throwable.getMessage());
-                    }
-                }
-            });
+        selectCharactersUseCase.selectCharacters(selectedCharacters, playerViewModels);
     }
 
     private void onPlayerAdded(PlayerViewModel playerViewModel) {
@@ -130,7 +112,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     public static final PresenterFactory<LobbyPresenter> FACTORY = new PresenterFactory<LobbyPresenter>() {
         @Override
         public LobbyPresenter create() {
-            return new LobbyPresenter(Injector.addPlayerUseCase(), Injector.selectCharactersUseCase());
+            return new LobbyPresenter(Injector.navigation(), Injector.addPlayerUseCase(), Injector.selectCharactersUseCase());
         }
     };
 }

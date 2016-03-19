@@ -1,9 +1,7 @@
 package com.keithsmyth.resistance.welcome.presentation;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -12,17 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.keithsmyth.resistance.Navigator;
 import com.keithsmyth.resistance.PresenterLoader;
 import com.keithsmyth.resistance.R;
-import com.keithsmyth.resistance.lobby.presentation.LobbyFragment;
 
 public class WelcomeFragment extends Fragment implements WelcomeView {
 
     private static final int LOADER_ID = 101;
 
     private WelcomePresenter welcomePresenter;
-    private Navigator navigator;
 
     private EditText nameEditText;
     private View newGameButton;
@@ -30,10 +25,8 @@ public class WelcomeFragment extends Fragment implements WelcomeView {
     private EditText gameIdEditText;
     private View progressBar;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        navigator = (Navigator) context;
+    public static WelcomeFragment create() {
+        return new WelcomeFragment();
     }
 
     @Override
@@ -94,6 +87,11 @@ public class WelcomeFragment extends Fragment implements WelcomeView {
     }
 
     @Override
+    public void setGame(int gameId) {
+        gameIdEditText.setText(String.valueOf(gameId));
+    }
+
+    @Override
     public String getGameIdInput() {
         return gameIdEditText.getText().toString();
     }
@@ -105,13 +103,6 @@ public class WelcomeFragment extends Fragment implements WelcomeView {
         joinGameButton.setEnabled(!isLoading);
         gameIdEditText.setEnabled(!isLoading);
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-    }
-
-    @Override
-    public void showError(String msg) {
-        if (getView() != null) {
-            Snackbar.make(getView(), msg, Snackbar.LENGTH_LONG).show();
-        }
     }
 
     @Override
@@ -131,8 +122,8 @@ public class WelcomeFragment extends Fragment implements WelcomeView {
     }
 
     @Override
-    public void openLobby(int gameId) {
-        navigator.openFragment(LobbyFragment.create(gameId));
+    public void onErrorShown() {
+        welcomePresenter.onErrorShown();
     }
 
     private class WelcomeLoaderCallbacks implements LoaderManager.LoaderCallbacks<WelcomePresenter> {

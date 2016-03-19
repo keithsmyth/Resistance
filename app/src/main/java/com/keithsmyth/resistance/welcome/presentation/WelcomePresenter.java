@@ -5,14 +5,9 @@ import android.text.TextUtils;
 import com.keithsmyth.resistance.Injector;
 import com.keithsmyth.resistance.Presenter;
 import com.keithsmyth.resistance.PresenterFactory;
-import com.keithsmyth.resistance.RxUtil;
 import com.keithsmyth.resistance.welcome.domain.JoinGameUseCase;
 import com.keithsmyth.resistance.welcome.domain.NewGameUseCase;
 import com.keithsmyth.resistance.welcome.domain.RestorePreferencesUseCase;
-
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 public class WelcomePresenter implements Presenter<WelcomeView> {
 
@@ -21,7 +16,6 @@ public class WelcomePresenter implements Presenter<WelcomeView> {
     private final JoinGameUseCase joinGameUseCase;
 
     private WelcomeView welcomeView;
-    private Subscription gameIdSubscription;
 
     public WelcomePresenter(RestorePreferencesUseCase restorePreferencesUseCase, NewGameUseCase newGameUseCase, JoinGameUseCase joinGameUseCase) {
         this.restorePreferencesUseCase = restorePreferencesUseCase;
@@ -32,7 +26,19 @@ public class WelcomePresenter implements Presenter<WelcomeView> {
     @Override
     public void attachView(WelcomeView welcomeView) {
         this.welcomeView = welcomeView;
-        setDefaultName();
+
+        restorePreferencesUseCase.resetActiveGame();
+
+        if (TextUtils.isEmpty(welcomeView.getNameInput())) {
+            welcomeView.setName(restorePreferencesUseCase.getName());
+        }
+
+        if (TextUtils.isEmpty(welcomeView.getGameIdInput())) {
+            final int gameId = restorePreferencesUseCase.getGame();
+            if (gameId != RestorePreferencesUseCase.NO_GAME) {
+                welcomeView.setGame(gameId);
+            }
+        }
     }
 
     @Override
@@ -42,7 +48,8 @@ public class WelcomePresenter implements Presenter<WelcomeView> {
 
     @Override
     public void onDestroyed() {
-        RxUtil.unsubscribe(gameIdSubscription);
+        joinGameUseCase.destroy();
+        newGameUseCase.destroy();
         detachView();
     }
 
@@ -53,10 +60,7 @@ public class WelcomePresenter implements Presenter<WelcomeView> {
             return;
         }
         welcomeView.setLoadingState(true);
-        RxUtil.unsubscribe(gameIdSubscription);
-        gameIdSubscription = newGameUseCase.execute(name)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(openGameAction, errorAction);
+        newGameUseCase.execute(name);
     }
 
     public void joinGame() {
@@ -67,16 +71,11 @@ public class WelcomePresenter implements Presenter<WelcomeView> {
             return;
         }
         welcomeView.setLoadingState(true);
-        RxUtil.unsubscribe(gameIdSubscription);
-        gameIdSubscription = joinGameUseCase.execute(gameId, name)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(openGameAction, errorAction);
+        joinGameUseCase.execute(gameId, name);
     }
 
-    private void setDefaultName() {
-        if (TextUtils.isEmpty(welcomeView.getNameInput())) {
-            welcomeView.setName(restorePreferencesUseCase.getName());
-        }
+    public void onErrorShown() {
+        welcomeView.setLoadingState(false);
     }
 
     private boolean validateName(String name) {
@@ -98,24 +97,6 @@ public class WelcomePresenter implements Presenter<WelcomeView> {
     private int parseGameId(String input) {
         return !TextUtils.isEmpty(input) && TextUtils.isDigitsOnly(input) ? Integer.parseInt(input) : 0;
     }
-
-    private final Action1<Integer> openGameAction = new Action1<Integer>() {
-        @Override
-        public void call(Integer gameId) {
-            RxUtil.unsubscribe(gameIdSubscription);
-            welcomeView.setLoadingState(false);
-            welcomeView.openLobby(gameId);
-        }
-    };
-
-    private final Action1<Throwable> errorAction = new Action1<Throwable>() {
-        @Override
-        public void call(Throwable throwable) {
-            RxUtil.unsubscribe(gameIdSubscription);
-            welcomeView.setLoadingState(false);
-            welcomeView.showError(throwable.getMessage());
-        }
-    };
 
     public static final PresenterFactory<WelcomePresenter> FACTORY = new PresenterFactory<WelcomePresenter>() {
         @Override

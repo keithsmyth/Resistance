@@ -1,13 +1,17 @@
 package com.keithsmyth.resistance.lobby.domain;
 
 import com.keithsmyth.resistance.data.CharacterProvider;
+import com.keithsmyth.resistance.data.GameProvider;
 import com.keithsmyth.resistance.data.GameRulesProvider;
+import com.keithsmyth.resistance.data.UserProvider;
 import com.keithsmyth.resistance.data.model.CharacterDataModel;
 import com.keithsmyth.resistance.data.model.GameRulesDataModel;
 import com.keithsmyth.resistance.lobby.exception.NumberPlayersException;
 import com.keithsmyth.resistance.lobby.exception.NumberCharactersException;
 import com.keithsmyth.resistance.lobby.mapper.CharacterMapper;
 import com.keithsmyth.resistance.lobby.model.CharacterViewModel;
+import com.keithsmyth.resistance.lobby.model.PlayerViewModel;
+import com.keithsmyth.resistance.navigation.Navigation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +24,17 @@ import static com.keithsmyth.resistance.data.GameRulesProvider.MIN_PLAYERS;
 
 public class SelectCharactersUseCase {
 
+    private final Navigation navigation;
+    private final UserProvider userProvider;
+    private final GameProvider gameProvider;
     private final CharacterProvider characterProvider;
     private final GameRulesProvider gameRulesProvider;
     private final CharacterMapper characterMapper;
 
-    public SelectCharactersUseCase(CharacterProvider characterProvider, GameRulesProvider gameRulesProvider) {
+    public SelectCharactersUseCase(Navigation navigation, UserProvider userProvider, GameProvider gameProvider, CharacterProvider characterProvider, GameRulesProvider gameRulesProvider) {
+        this.navigation = navigation;
+        this.userProvider = userProvider;
+        this.gameProvider = gameProvider;
         this.characterProvider = characterProvider;
         this.gameRulesProvider = gameRulesProvider;
         characterMapper = new CharacterMapper();
@@ -39,14 +49,17 @@ public class SelectCharactersUseCase {
         return characters;
     }
 
-    public Observable<Integer> selectCharacters(List<CharacterViewModel> characterViewModels, int numberOfPlayers) {
-
-        // TODO: lock down lobby
+    public void selectCharacters(List<CharacterViewModel> characterViewModels, List<PlayerViewModel> playerViewModels) {
+        // lock down lobby
+        gameProvider.setGameState(GameProvider.STATE_STARTING);
 
         // verify number of players
+        int numberOfPlayers = playerViewModels.size();
         if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
+            gameProvider.setGameState(GameProvider.STATE_JOINING);
             final NumberPlayersException numberPlayersException = new NumberPlayersException(MIN_PLAYERS, MAX_PLAYERS, numberOfPlayers);
-            return createExceptionObservable(numberPlayersException);
+            navigation.showError(numberPlayersException);
+            return;
         }
 
         // verify good / bad ratio
@@ -61,23 +74,18 @@ public class SelectCharactersUseCase {
         }
         final GameRulesDataModel gameRulesDataModel = gameRulesProvider.getGameRules(numberOfPlayers);
         if (badCharacters > gameRulesDataModel.badPlayers || goodCharacters > gameRulesDataModel.goodPlayers) {
+            gameProvider.setGameState(GameProvider.STATE_JOINING);
             final NumberCharactersException numberCharactersException = new NumberCharactersException(gameRulesDataModel.goodPlayers, goodCharacters, gameRulesDataModel.badPlayers, badCharacters);
-            return createExceptionObservable(numberCharactersException);
+            navigation.showError(numberCharactersException);
+            return;
         }
 
         // TODO: assign characters to players
 
-        // save
-        return Observable.from(new Integer[] {1});
-    }
+        // TODO: save
 
-    private Observable<Integer> createExceptionObservable(final Throwable throwable) {
-        return Observable.create(new Observable.OnSubscribe<Integer>() {
-            @Override
-            public void call(Subscriber<? super Integer> subscriber) {
-                // TODO: unlock lobby
-                subscriber.onError(throwable);
-            }
-        });
+        // start the game
+        gameProvider.setGameState(GameProvider.STATE_STARTED);
+        navigation.openGame();
     }
 }

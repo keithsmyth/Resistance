@@ -3,10 +3,13 @@ package com.keithsmyth.resistance;
 import android.app.Application;
 
 import com.keithsmyth.resistance.data.CharacterProvider;
+import com.keithsmyth.resistance.data.GameProvider;
 import com.keithsmyth.resistance.data.GameRulesProvider;
-import com.keithsmyth.resistance.data.PlayerProvider;
+import com.keithsmyth.resistance.data.UserProvider;
+import com.keithsmyth.resistance.data.prefs.SharedPreferencesWrapper;
 import com.keithsmyth.resistance.lobby.domain.AddPlayerUseCase;
 import com.keithsmyth.resistance.lobby.domain.SelectCharactersUseCase;
+import com.keithsmyth.resistance.navigation.Navigation;
 import com.keithsmyth.resistance.welcome.domain.JoinGameUseCase;
 import com.keithsmyth.resistance.welcome.domain.NewGameUseCase;
 import com.keithsmyth.resistance.welcome.domain.RestorePreferencesUseCase;
@@ -14,7 +17,10 @@ import com.keithsmyth.resistance.welcome.domain.RestorePreferencesUseCase;
 public class Injector {
 
     private static Application application;
-    private static PlayerProvider playerProvider;
+    private static Navigation navigation;
+    private static SharedPreferencesWrapper preferencesWrapper;
+    private static UserProvider userProvider;
+    private static GameProvider gameProvider;
     private static CharacterProvider characterProvider;
     private static GameRulesProvider gameRulesProvider;
 
@@ -22,11 +28,32 @@ public class Injector {
         Injector.application = application;
     }
 
-    public static PlayerProvider playerProvider() {
-        if (playerProvider == null) {
-            playerProvider = new PlayerProvider(application);
+    public static Navigation navigation() {
+        if (navigation == null) {
+            navigation = new Navigation();
         }
-        return playerProvider;
+        return navigation;
+    }
+
+    private static SharedPreferencesWrapper sharedPreferencesWrapper() {
+        if (preferencesWrapper == null) {
+            preferencesWrapper = new SharedPreferencesWrapper(application);
+        }
+        return preferencesWrapper;
+    }
+
+    public static UserProvider userProvider() {
+        if (userProvider == null) {
+            userProvider = new UserProvider(sharedPreferencesWrapper());
+        }
+        return userProvider;
+    }
+
+    public static GameProvider gameProvider() {
+        if (gameProvider == null) {
+            gameProvider = new GameProvider(sharedPreferencesWrapper(), userProvider());
+        }
+        return gameProvider;
     }
 
     public static CharacterProvider characterProvider() {
@@ -44,22 +71,22 @@ public class Injector {
     }
 
     public static RestorePreferencesUseCase restorePreferencesUseCase() {
-        return new RestorePreferencesUseCase(playerProvider());
+        return new RestorePreferencesUseCase(userProvider(), gameProvider());
     }
 
     public static NewGameUseCase newGameUseCase() {
-        return new NewGameUseCase(playerProvider());
+        return new NewGameUseCase(navigation(), userProvider(), gameProvider());
     }
 
     public static JoinGameUseCase joinGameUseCase() {
-        return new JoinGameUseCase(playerProvider());
+        return new JoinGameUseCase(navigation(), userProvider(), gameProvider());
     }
 
     public static AddPlayerUseCase addPlayerUseCase() {
-        return new AddPlayerUseCase(playerProvider());
+        return new AddPlayerUseCase(userProvider());
     }
 
     public static SelectCharactersUseCase selectCharactersUseCase() {
-        return new SelectCharactersUseCase(characterProvider(), gameRulesProvider());
+        return new SelectCharactersUseCase(navigation(), userProvider(), gameProvider(), characterProvider(), gameRulesProvider());
     }
 }

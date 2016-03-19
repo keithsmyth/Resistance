@@ -8,14 +8,8 @@ import com.keithsmyth.resistance.R;
 
 public class GameFragment extends Fragment {
 
-    private static final String KEY_GAME_ID = "KEY_GAME_ID";
-
-    public static GameFragment create(int gameId) {
-        final Bundle args = new Bundle();
-        args.putInt(KEY_GAME_ID, gameId);
-        final GameFragment fragment = new GameFragment();
-        fragment.setArguments(args);
-        return fragment;
+    public static GameFragment create() {
+        return new GameFragment();
     }
 
     @Override

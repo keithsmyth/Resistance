@@ -1,9 +1,7 @@
 package com.keithsmyth.resistance.lobby.presentation;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -13,12 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.keithsmyth.resistance.Navigator;
 import com.keithsmyth.resistance.PresenterLoader;
 import com.keithsmyth.resistance.R;
-import com.keithsmyth.resistance.game.GameFragment;
-import com.keithsmyth.resistance.lobby.exception.NumberPlayersException;
-import com.keithsmyth.resistance.lobby.exception.NumberCharactersException;
 import com.keithsmyth.resistance.lobby.model.CharacterViewModel;
 import com.keithsmyth.resistance.lobby.model.PlayerViewModel;
 
@@ -26,26 +20,14 @@ import java.util.List;
 
 public class LobbyFragment extends Fragment implements LobbyView {
 
-    private static final String KEY_GAME_ID = "KEY_GAME_ID";
     private static final int LOADER_ID = 101;
 
     private LobbyPresenter lobbyPresenter;
-    private Navigator navigator;
     private PlayerAdapter playerAdapter;
     private RecyclerView charactersRecycler;
 
-    public static LobbyFragment create(int gameId) {
-        final Bundle args = new Bundle();
-        args.putInt(KEY_GAME_ID, gameId);
-        final LobbyFragment fragment = new LobbyFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        navigator = (Navigator) context;
+    public static LobbyFragment create() {
+        return new LobbyFragment();
     }
 
     @Override
@@ -77,7 +59,7 @@ public class LobbyFragment extends Fragment implements LobbyView {
         view.findViewById(R.id.start_game_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lobbyPresenter.startGame(playerAdapter.getItemCount());
+                lobbyPresenter.startGame();
             }
         });
     }
@@ -112,35 +94,6 @@ public class LobbyFragment extends Fragment implements LobbyView {
         characterAdapter.setItems(characters);
         charactersRecycler.setAdapter(characterAdapter);
         charactersRecycler.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void showError(String msg) {
-        if (getView() != null) {
-            Snackbar.make(getView(), msg, Snackbar.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void showNumberPlayersError(NumberPlayersException numberPlayersException) {
-        showError(getString(R.string.lobby_number_players_error,
-            numberPlayersException.minPlayers,
-            numberPlayersException.maxPlayers,
-            numberPlayersException.currentPlayers));
-    }
-
-    @Override
-    public void showSelectCharactersError(NumberCharactersException numberCharactersException) {
-        showError(getString(R.string.lobby_number_characters_error,
-            numberCharactersException.expectedGood,
-            numberCharactersException.actualGood,
-            numberCharactersException.expectedBad,
-            numberCharactersException.actualBad));
-    }
-
-    @Override
-    public void openGameRoom(int gameId) {
-        navigator.openFragment(GameFragment.create(gameId));
     }
 
     private class LobbyLoaderCallbacks implements LoaderManager.LoaderCallbacks<LobbyPresenter> {

@@ -1,6 +1,6 @@
 package com.keithsmyth.resistance.lobby.domain;
 
-import com.keithsmyth.resistance.data.PlayerProvider;
+import com.keithsmyth.resistance.data.UserProvider;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.lobby.model.PlayerViewModel;
 
@@ -12,15 +12,15 @@ import rx.schedulers.Schedulers;
 
 public class AddPlayerUseCase {
 
-    private final PlayerProvider playerProvider;
+    private final UserProvider userProvider;
 
-    public AddPlayerUseCase(PlayerProvider playerProvider) {
-        this.playerProvider = playerProvider;
+    public AddPlayerUseCase(UserProvider userProvider) {
+        this.userProvider = userProvider;
     }
 
     public Observable<PlayerViewModel> execute() {
 
-        final PlayerDataModel playerDataModel = playerProvider.getPlayer();
+        final PlayerDataModel playerDataModel = userProvider.getPlayer();
 
         final PlayerViewModel[] viewModels = {
             new PlayerViewModel(playerDataModel.uuid, playerDataModel.name, true, true),

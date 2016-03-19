@@ -1,6 +1,11 @@
 package com.keithsmyth.resistance.lobby.exception;
 
-public class NumberPlayersException extends Throwable {
+import android.content.Context;
+
+import com.keithsmyth.resistance.R;
+import com.keithsmyth.resistance.navigation.DisplayThrowable;
+
+public class NumberPlayersException extends DisplayThrowable {
 
     public final int minPlayers;
     public final int maxPlayers;
@@ -12,4 +17,8 @@ public class NumberPlayersException extends Throwable {
         this.currentPlayers = currentPlayers;
     }
 
+    @Override
+    public String getDisplayMessage(Context context) {
+        return context.getString(R.string.lobby_number_players_error, minPlayers, maxPlayers, currentPlayers);
+    }
 }
