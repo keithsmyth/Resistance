@@ -1,7 +1,6 @@
 package com.keithsmyth.resistance.feature.lobby.domain;
 
 import com.keithsmyth.resistance.data.UserProvider;
-import com.keithsmyth.resistance.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.model.PlayerViewModel;
 
 import java.util.UUID;
@@ -20,10 +19,11 @@ public class AddPlayerUseCase {
 
     public Observable<PlayerViewModel> execute() {
 
-        final PlayerDataModel playerDataModel = userProvider.getPlayer();
+        final String id = userProvider.getId();
+        final String name = userProvider.getName();
 
         final PlayerViewModel[] viewModels = {
-            new PlayerViewModel(playerDataModel.uuid, playerDataModel.name, true, true),
+            new PlayerViewModel(id, name, true, true),
             new PlayerViewModel(UUID.randomUUID().toString(), "Player 2", false, false),
             new PlayerViewModel(UUID.randomUUID().toString(), "Player 3", false, false),
             new PlayerViewModel(UUID.randomUUID().toString(), "Player 4", false, false),

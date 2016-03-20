@@ -1,0 +1,165 @@
+package com.keithsmyth.resistance.data;
+
+import android.support.annotation.IntDef;
+
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+import com.keithsmyth.resistance.data.firebase.FirebaseFactory;
+import com.keithsmyth.resistance.data.model.GameInfoDataModel;
+import com.keithsmyth.resistance.data.prefs.SharedPreferencesWrapper;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+
+public class GameInfoProvider {
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({STATE_NONE, STATE_NEW, STATE_STARTING, STATE_STARTED, STATE_FINISHED})
+    public @interface GameState {
+    }
+
+    public static final int STATE_NONE = 0;
+    public static final int STATE_NEW = 1;
+    public static final int STATE_STARTING = 2;
+    public static final int STATE_STARTED = 3;
+    public static final int STATE_FINISHED = 4;
+
+    public static final int NO_GAME_ID = -1;
+
+    private static final String KEY_CURRENT_GAME_ID = "game-current-game-id";
+    private static final int GAME_ID_MIN = 10000;
+    private static final int GAME_ID_MAX = 99999;
+
+    private final SharedPreferencesWrapper prefs;
+    private final FirebaseFactory firebaseFactory;
+    private final UserProvider userProvider;
+
+    @GameState private int gameState;
+
+    public GameInfoProvider(SharedPreferencesWrapper prefs, FirebaseFactory firebaseFactory, UserProvider userProvider) {
+        this.prefs = prefs;
+        this.firebaseFactory = firebaseFactory;
+        this.userProvider = userProvider;
+    }
+
+    public int getCurrentGameId() {
+        return prefs.get().getInt(KEY_CURRENT_GAME_ID, NO_GAME_ID);
+    }
+
+    public void setCurrentGameId(int gameId) {
+        prefs.get().edit().putInt(KEY_CURRENT_GAME_ID, gameId).apply();
+    }
+
+    public void clearCurrentGameId() {
+        prefs.get().edit().remove(KEY_CURRENT_GAME_ID).apply();
+    }
+
+    public Observable<Integer> getGameState() {
+        return Observable.from(new Integer[]{gameState})
+            .subscribeOn(Schedulers.io())
+            .delay(1, TimeUnit.SECONDS);
+    }
+
+    public void setGameState(@GameState int gameState) {
+        this.gameState = gameState;
+    }
+
+    public Observable<Integer> createGame() {
+        // TODO: build this chain more elegantly
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(final Subscriber<? super Integer> subscriber) {
+                getActiveGames()
+                    .map(new Func1<Set<Integer>, Integer>() {
+                        @Override
+                        public Integer call(Set<Integer> activeGames) {
+                            return getUniqueGameId(activeGames);
+                        }
+                    })
+                    .subscribe(new Action1<Integer>() {
+                        @Override
+                        public void call(final Integer gameId) {
+                            createGameInfoModel(gameId, subscriber);
+                            addGameToActiveGames(gameId);
+                        }
+                    });
+            }
+        });
+    }
+
+    private Observable<Set<Integer>> getActiveGames() {
+        return Observable.create(new Observable.OnSubscribe<Set<Integer>>() {
+            @Override
+            public void call(final Subscriber<? super Set<Integer>> subscriber) {
+                firebaseFactory.getActiveGamesRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        final Set<Integer> activeGameIdSet = new HashSet<>();
+                        for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                            activeGameIdSet.add(Integer.valueOf(childSnapshot.getKey()));
+                        }
+                        subscriber.onNext(activeGameIdSet);
+                        subscriber.onCompleted();
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+                        subscriber.onError(firebaseError.toException());
+                    }
+                });
+            }
+        });
+    }
+
+    private int getUniqueGameId(Set<Integer> activeGames) {
+        final Random rand = new Random();
+        int gameId = generateGameId(rand);
+        while (activeGames.contains(gameId)) {
+            gameId = generateGameId(rand);
+        }
+        return gameId;
+    }
+
+    private int generateGameId(Random rand) {
+        return rand.nextInt((GAME_ID_MAX - GAME_ID_MIN) + 1) + GAME_ID_MIN;
+    }
+
+    private void createGameInfoModel(final Integer gameId, final Subscriber<? super Integer> subscriber) {
+        final Firebase ref = firebaseFactory.getGameRef(gameId);
+        final GameInfoDataModel gameInfoDataModel = new GameInfoDataModel();
+        gameInfoDataModel.setOwnerId(userProvider.getId());
+        gameInfoDataModel.setStatus(STATE_NEW);
+        ref.setValue(gameInfoDataModel, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if (firebaseError == null) {
+                    subscriber.onNext(gameId);
+                    subscriber.onCompleted();
+                } else {
+                    subscriber.onError(firebaseError.toException());
+                }
+            }
+        });
+    }
+
+    private void addGameToActiveGames(final Integer gameId) {
+        final Firebase ref = firebaseFactory.getActiveGamesRef();
+        final Map<String, Object> newActiveGameIdMap = new HashMap<>(1);
+        newActiveGameIdMap.put(gameId.toString(), "");
+        ref.updateChildren(newActiveGameIdMap);
+    }
+}

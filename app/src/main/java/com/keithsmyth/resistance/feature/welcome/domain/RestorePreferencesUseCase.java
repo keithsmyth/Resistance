@@ -1,8 +1,7 @@
 package com.keithsmyth.resistance.feature.welcome.domain;
 
-import com.keithsmyth.resistance.data.GameProvider;
+import com.keithsmyth.resistance.data.GameInfoProvider;
 import com.keithsmyth.resistance.data.UserProvider;
-import com.keithsmyth.resistance.data.model.PlayerDataModel;
 
 public class RestorePreferencesUseCase {
 
@@ -10,24 +9,24 @@ public class RestorePreferencesUseCase {
     public static final int NO_GAME = -1;
 
     private final UserProvider userProvider;
-    private final GameProvider gameProvider;
+    private final GameInfoProvider gameInfoProvider;
 
-    public RestorePreferencesUseCase(UserProvider userProvider, GameProvider gameProvider) {
+    public RestorePreferencesUseCase(UserProvider userProvider, GameInfoProvider gameInfoProvider) {
         this.userProvider = userProvider;
-        this.gameProvider = gameProvider;
+        this.gameInfoProvider = gameInfoProvider;
     }
 
     public void resetActiveGame() {
-        gameProvider.clearActiveGameId();
+        gameInfoProvider.clearCurrentGameId();
     }
 
     public String getName() {
-        final PlayerDataModel player = userProvider.getPlayer();
-        return (player != UserProvider.NO_PLAYER) ? player.name : NO_NAME;
+        final String name = userProvider.getName();
+        return name == null ? NO_NAME : name;
     }
 
     public int getGame() {
-        final PlayerDataModel player = userProvider.getPlayer();
-        return (player != UserProvider.NO_PLAYER) ? player.gameId : NO_GAME;
+        final int gameId = userProvider.getGameId();
+        return gameId == UserProvider.NO_GAME_ID ? NO_GAME : gameId;
     }
 }

@@ -1,11 +1,11 @@
 package com.keithsmyth.resistance.feature.welcome.domain;
 
 import com.keithsmyth.resistance.RxUtil;
-import com.keithsmyth.resistance.data.GameProvider;
+import com.keithsmyth.resistance.data.GameInfoProvider;
 import com.keithsmyth.resistance.data.UserProvider;
+import com.keithsmyth.resistance.feature.welcome.exception.GameNotExistException;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
-import com.keithsmyth.resistance.feature.welcome.exception.GameNotExistException;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -15,23 +15,23 @@ public class JoinGameUseCase {
 
     private final Navigation navigation;
     private final UserProvider userProvider;
-    private final GameProvider gameProvider;
+    private final GameInfoProvider gameInfoProvider;
 
     private Subscription gameStateSubscription;
 
-    public JoinGameUseCase(Navigation navigation, UserProvider userProvider, GameProvider gameProvider) {
+    public JoinGameUseCase(Navigation navigation, UserProvider userProvider, GameInfoProvider gameInfoProvider) {
         this.navigation = navigation;
         this.userProvider = userProvider;
-        this.gameProvider = gameProvider;
+        this.gameInfoProvider = gameInfoProvider;
     }
 
     public void execute(int gameId, String playerName) {
-        userProvider.setPlayer(playerName);
+        userProvider.setName(playerName);
         userProvider.setGameId(gameId);
 
         // check game state, navigate to correct screen
         RxUtil.unsubscribe(gameStateSubscription);
-        gameStateSubscription = gameProvider.getGameState()
+        gameStateSubscription = gameInfoProvider.getGameState()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Action1<Integer>() {
                 @Override
@@ -51,19 +51,19 @@ public class JoinGameUseCase {
         RxUtil.unsubscribe(gameStateSubscription);
     }
 
-    private void onGameStateReturned(@GameProvider.GameState int gameState) {
+    private void onGameStateReturned(@GameInfoProvider.GameState int gameState) {
         switch (gameState) {
-            case GameProvider.STATE_NONE:
+            case GameInfoProvider.STATE_NONE:
                 navigation.showError(new GameNotExistException());
                 break;
-            case GameProvider.STATE_JOINING:
-            case GameProvider.STATE_STARTING:
+            case GameInfoProvider.STATE_NEW:
+            case GameInfoProvider.STATE_STARTING:
                 navigation.openLobby();
                 break;
-            case GameProvider.STATE_STARTED:
+            case GameInfoProvider.STATE_STARTED:
                 navigation.openGame();
                 break;
-            case GameProvider.STATE_FINISHED:
+            case GameInfoProvider.STATE_FINISHED:
                 navigation.openEnd();
                 break;
         }
