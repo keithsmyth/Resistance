@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 
 import com.keithsmyth.resistance.PresenterLoader;
 import com.keithsmyth.resistance.R;
+import com.keithsmyth.resistance.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
-import com.keithsmyth.resistance.feature.lobby.model.PlayerViewModel;
 
 import java.util.List;
 
@@ -77,13 +77,18 @@ public class LobbyFragment extends Fragment implements LobbyView {
     }
 
     @Override
-    public void setPlayers(List<PlayerViewModel> playerViewModels) {
-        playerAdapter.setItems(playerViewModels);
+    public void setPlayers(List<PlayerDataModel> playerDataModels) {
+        playerAdapter.setItems(playerDataModels);
     }
 
     @Override
-    public void addPlayer(PlayerViewModel playerViewModel) {
-        playerAdapter.addItem(playerViewModel);
+    public void addPlayer(PlayerDataModel playerDataModel) {
+        playerAdapter.addItem(playerDataModel);
+    }
+
+    @Override
+    public void removePlayer(PlayerDataModel playerDataModel) {
+        playerAdapter.removeItem(playerDataModel);
     }
 
     @Override

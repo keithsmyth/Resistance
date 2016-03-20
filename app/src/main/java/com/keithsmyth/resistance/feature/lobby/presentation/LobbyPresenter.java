@@ -4,10 +4,11 @@ import com.keithsmyth.resistance.Injector;
 import com.keithsmyth.resistance.Presenter;
 import com.keithsmyth.resistance.PresenterFactory;
 import com.keithsmyth.resistance.RxUtil;
+import com.keithsmyth.resistance.data.model.ModelActionWrapper;
+import com.keithsmyth.resistance.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.SelectCharactersUseCase;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
-import com.keithsmyth.resistance.feature.lobby.model.PlayerViewModel;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
 
@@ -26,7 +27,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     private final AddPlayerUseCase addPlayerUseCase;
     private final SelectCharactersUseCase selectCharactersUseCase;
 
-    private final List<PlayerViewModel> playerViewModels;
+    private final List<PlayerDataModel> playerDataModels;
     private final List<CharacterViewModel> characterViewModels;
     private final Set<CharacterViewModel> selectedCharacterSet;
 
@@ -37,7 +38,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
         this.navigation = navigation;
         this.addPlayerUseCase = addPlayerUseCase;
         this.selectCharactersUseCase = selectCharactersUseCase;
-        playerViewModels = new ArrayList<>();
+        playerDataModels = new ArrayList<>();
         characterViewModels=  new ArrayList<>();
         selectedCharacterSet = new HashSet<>();
     }
@@ -45,14 +46,18 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     @Override
     public void attachView(final LobbyView lobbyView) {
         this.lobbyView = lobbyView;
-        if (playerViewModels.isEmpty()) {
+        if (playerDataModels.isEmpty()) {
             RxUtil.unsubscribe(subscription);
             subscription = addPlayerUseCase.execute()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<PlayerViewModel>() {
+                .subscribe(new Action1<ModelActionWrapper<PlayerDataModel>>() {
                     @Override
-                    public void call(PlayerViewModel playerViewModel) {
-                        onPlayerAdded(playerViewModel);
+                    public void call(ModelActionWrapper<PlayerDataModel> playerDataModelModelActionWrapper) {
+                        if (playerDataModelModelActionWrapper.isAdded) {
+                            onPlayerAdded(playerDataModelModelActionWrapper.dataModel);
+                        } else {
+                            onPlayerRemoved(playerDataModelModelActionWrapper.dataModel);
+                        }
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -61,7 +66,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
                     }
                 });
         } else {
-            lobbyView.setPlayers(playerViewModels);
+            lobbyView.setPlayers(playerDataModels);
             if (!characterViewModels.isEmpty()) {
                 lobbyView.showCharacters(characterViewModels);
             }
@@ -93,20 +98,28 @@ public class LobbyPresenter implements Presenter<LobbyView> {
 
     public void startGame() {
         final List<CharacterViewModel> selectedCharacters = new ArrayList<>(selectedCharacterSet);
-        selectCharactersUseCase.selectCharacters(selectedCharacters, playerViewModels);
+        selectCharactersUseCase.selectCharacters(selectedCharacters, playerDataModels);
     }
 
-    private void onPlayerAdded(PlayerViewModel playerViewModel) {
-        playerViewModels.add(playerViewModel);
+    private void onPlayerAdded(PlayerDataModel playerDataModel) {
+        playerDataModels.add(playerDataModel);
         if (lobbyView == null) {
             return;
         }
-        lobbyView.addPlayer(playerViewModel);
-        if (playerViewModel.isMe) {
+        lobbyView.addPlayer(playerDataModel);
+        if (playerDataModel.isMe) {
             characterViewModels.clear();
             characterViewModels.addAll(selectCharactersUseCase.getCharacters());
             lobbyView.showCharacters(characterViewModels);
         }
+    }
+
+    private void onPlayerRemoved(PlayerDataModel playerDataModel) {
+        playerDataModels.remove(playerDataModel);
+        if (lobbyView != null) {
+            lobbyView.removePlayer(playerDataModel);
+        }
+
     }
 
     public static final PresenterFactory<LobbyPresenter> FACTORY = new PresenterFactory<LobbyPresenter>() {

@@ -5,9 +5,12 @@ import android.support.annotation.IntDef;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.keithsmyth.resistance.data.firebase.FirebaseChildEventWrapper;
 import com.keithsmyth.resistance.data.firebase.FirebaseFactory;
+import com.keithsmyth.resistance.data.model.FirebaseSingleEventWrapper;
 import com.keithsmyth.resistance.data.model.GameInfoDataModel;
+import com.keithsmyth.resistance.data.model.ModelActionWrapper;
+import com.keithsmyth.resistance.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.data.prefs.SharedPreferencesWrapper;
 
 import java.lang.annotation.Retention;
@@ -22,6 +25,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func2;
 
 public class GameInfoProvider {
 
@@ -52,7 +56,7 @@ public class GameInfoProvider {
         this.userProvider = userProvider;
     }
 
-    public int getCurrentGameId() {
+    private int getCurrentGameId() {
         return prefs.get().getInt(KEY_CURRENT_GAME_ID, NO_GAME_ID);
     }
 
@@ -88,33 +92,56 @@ public class GameInfoProvider {
     }
 
     public Observable<Integer> getGameState() {
-        return Observable.create(new Observable.OnSubscribe<Integer>() {
+        final Firebase ref = firebaseFactory.getGameStateRef(getCurrentGameId());
+        return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<Integer>() {
             @Override
-            public void call(final Subscriber<? super Integer> subscriber) {
-                final Firebase ref = firebaseFactory.getGameStateRef(getCurrentGameId());
-                ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        final Integer gameState = dataSnapshot.getValue(Integer.class);
-                        if (gameState != null) {
-                            subscriber.onNext(gameState);
-                        } else {
-                            subscriber.onNext(STATE_NONE);
-                        }
-                        subscriber.onCompleted();
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-                        subscriber.onError(firebaseError.toException());
-                    }
-                });
+            public Integer map(DataSnapshot dataSnapshot) {
+                final Integer gameState = dataSnapshot.getValue(Integer.class);
+                return gameState == null ? STATE_NONE : gameState;
             }
-        });
+        }).getObservable();
     }
 
     public void setGameState(@GameState int gameState) {
         throw new UnsupportedOperationException();
+    }
+
+    public Observable<ModelActionWrapper<PlayerDataModel>> getPlayers() {
+        final String userId = userProvider.getId();
+
+        final Firebase ref = firebaseFactory.getPlayersRef(getCurrentGameId());
+        final FirebaseChildEventWrapper.Mapper<DataSnapshot> mapper = new FirebaseChildEventWrapper.Mapper<DataSnapshot>() {
+            @Override
+            public DataSnapshot map(DataSnapshot dataSnapshot) {
+                return dataSnapshot;
+            }
+        };
+        final Observable<ModelActionWrapper<DataSnapshot>> observable = new FirebaseChildEventWrapper<>(ref, mapper, mapper).getObservable();
+
+        return getOwner()
+            .zipWith(observable, new Func2<String, ModelActionWrapper<DataSnapshot>, ModelActionWrapper<PlayerDataModel>>() {
+                @Override
+                public ModelActionWrapper<PlayerDataModel> call(String ownerId, ModelActionWrapper<DataSnapshot> dataSnapshotModelActionWrapper) {
+                    final DataSnapshot dataSnapshot = dataSnapshotModelActionWrapper.dataModel;
+                    final String id = dataSnapshot.getKey();
+                    final String name = dataSnapshot.getValue().toString();
+                    final boolean isOwner = userId.equals(ownerId);
+                    final boolean isMe = userId.equals(id);
+                    return new ModelActionWrapper<>(new PlayerDataModel(id, name, isOwner, isMe), dataSnapshotModelActionWrapper.isAdded);
+                }
+            });
+
+
+    }
+
+    private Observable<String> getOwner() {
+        final Firebase ref = firebaseFactory.getOwnerRef(getCurrentGameId());
+        return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<String>() {
+            @Override
+            public String map(DataSnapshot dataSnapshot) {
+                return dataSnapshot.getValue(String.class);
+            }
+        }).getObservable();
     }
 
     public Observable<GameInfoDataModel> getGameInfo() {
@@ -122,27 +149,17 @@ public class GameInfoProvider {
     }
 
     private Observable<Set<Integer>> getActiveGames() {
-        return Observable.create(new Observable.OnSubscribe<Set<Integer>>() {
+        final Firebase ref = firebaseFactory.getActiveGamesRef();
+        return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<Set<Integer>>() {
             @Override
-            public void call(final Subscriber<? super Set<Integer>> subscriber) {
-                firebaseFactory.getActiveGamesRef().addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        final Set<Integer> activeGameIdSet = new HashSet<>();
-                        for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                            activeGameIdSet.add(Integer.valueOf(childSnapshot.getKey()));
-                        }
-                        subscriber.onNext(activeGameIdSet);
-                        subscriber.onCompleted();
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-                        subscriber.onError(firebaseError.toException());
-                    }
-                });
+            public Set<Integer> map(DataSnapshot dataSnapshot) {
+                final Set<Integer> activeGameIdSet = new HashSet<>();
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    activeGameIdSet.add(Integer.valueOf(childSnapshot.getKey()));
+                }
+                return activeGameIdSet;
             }
-        });
+        }).getObservable();
     }
 
     private int getUniqueGameId(Set<Integer> activeGames) {

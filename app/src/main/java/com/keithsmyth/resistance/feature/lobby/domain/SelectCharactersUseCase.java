@@ -6,11 +6,11 @@ import com.keithsmyth.resistance.data.GameRulesProvider;
 import com.keithsmyth.resistance.data.UserProvider;
 import com.keithsmyth.resistance.data.model.CharacterDataModel;
 import com.keithsmyth.resistance.data.model.GameRulesDataModel;
+import com.keithsmyth.resistance.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.exception.NumberCharactersException;
 import com.keithsmyth.resistance.feature.lobby.exception.NumberPlayersException;
 import com.keithsmyth.resistance.feature.lobby.mapper.CharacterMapper;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
-import com.keithsmyth.resistance.feature.lobby.model.PlayerViewModel;
 import com.keithsmyth.resistance.navigation.Navigation;
 
 import java.util.ArrayList;
@@ -46,12 +46,12 @@ public class SelectCharactersUseCase {
         return characters;
     }
 
-    public void selectCharacters(List<CharacterViewModel> characterViewModels, List<PlayerViewModel> playerViewModels) {
+    public void selectCharacters(List<CharacterViewModel> characterViewModels, List<PlayerDataModel> playerDataModels) {
         // lock down lobby
         gameInfoProvider.setGameState(GameInfoProvider.STATE_STARTING);
 
         // verify number of players
-        int numberOfPlayers = playerViewModels.size();
+        int numberOfPlayers = playerDataModels.size();
         if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
             gameInfoProvider.setGameState(GameInfoProvider.STATE_NEW);
             final NumberPlayersException numberPlayersException = new NumberPlayersException(MIN_PLAYERS, MAX_PLAYERS, numberOfPlayers);

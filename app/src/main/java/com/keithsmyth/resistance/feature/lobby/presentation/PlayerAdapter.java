@@ -7,14 +7,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.keithsmyth.resistance.R;
-import com.keithsmyth.resistance.feature.lobby.model.PlayerViewModel;
+import com.keithsmyth.resistance.data.model.PlayerDataModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder> {
 
-    private final List<PlayerViewModel> items;
+    private final List<PlayerDataModel> items;
 
     public PlayerAdapter() {
         items = new ArrayList<>();
@@ -36,18 +36,18 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
         return items.size();
     }
 
-    public void setItems(List<PlayerViewModel> items) {
+    public void setItems(List<PlayerDataModel> items) {
         this.items.clear();
         this.items.addAll(items);
         notifyDataSetChanged();
     }
 
-    public void addItem(PlayerViewModel item) {
+    public void addItem(PlayerDataModel item) {
         items.add(item);
         notifyItemInserted(items.size() - 1);
     }
 
-    public void removeItem(PlayerViewModel item) {
+    public void removeItem(PlayerDataModel item) {
         final int position = items.indexOf(item);
         if (position >= 0) {
             items.remove(position);

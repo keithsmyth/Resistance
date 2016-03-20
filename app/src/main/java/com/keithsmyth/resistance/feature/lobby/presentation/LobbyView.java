@@ -1,14 +1,16 @@
 package com.keithsmyth.resistance.feature.lobby.presentation;
 
+import com.keithsmyth.resistance.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
-import com.keithsmyth.resistance.feature.lobby.model.PlayerViewModel;
 
 import java.util.List;
 
 public interface LobbyView {
-    void setPlayers(List<PlayerViewModel> playerViewModels);
+    void setPlayers(List<PlayerDataModel> playerDataModels);
 
-    void addPlayer(PlayerViewModel playerViewModel);
+    void addPlayer(PlayerDataModel playerDataModel);
+
+    void removePlayer(PlayerDataModel playerDataModel);
 
     void showCharacters(List<CharacterViewModel> characters);
 }

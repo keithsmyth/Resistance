@@ -92,7 +92,7 @@ public class Injector {
     }
 
     public static AddPlayerUseCase addPlayerUseCase() {
-        return new AddPlayerUseCase(userProvider());
+        return new AddPlayerUseCase(userProvider(), gameInfoProvider());
     }
 
     public static SelectCharactersUseCase selectCharactersUseCase() {
