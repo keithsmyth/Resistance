@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.welcome.presentation;
+package com.keithsmyth.resistance.feature.welcome.presentation;
 
 import com.keithsmyth.resistance.navigation.ErrorView;
 

@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.welcome.presentation;
+package com.keithsmyth.resistance.feature.welcome.presentation;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

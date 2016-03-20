@@ -1,13 +1,13 @@
-package com.keithsmyth.resistance.welcome.presentation;
+package com.keithsmyth.resistance.feature.welcome.presentation;
 
 import android.text.TextUtils;
 
 import com.keithsmyth.resistance.Injector;
 import com.keithsmyth.resistance.Presenter;
 import com.keithsmyth.resistance.PresenterFactory;
-import com.keithsmyth.resistance.welcome.domain.JoinGameUseCase;
-import com.keithsmyth.resistance.welcome.domain.NewGameUseCase;
-import com.keithsmyth.resistance.welcome.domain.RestorePreferencesUseCase;
+import com.keithsmyth.resistance.feature.welcome.domain.JoinGameUseCase;
+import com.keithsmyth.resistance.feature.welcome.domain.NewGameUseCase;
+import com.keithsmyth.resistance.feature.welcome.domain.RestorePreferencesUseCase;
 
 public class WelcomePresenter implements Presenter<WelcomeView> {
 

@@ -6,13 +6,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.keithsmyth.resistance.game.GameFragment;
-import com.keithsmyth.resistance.lobby.presentation.LobbyFragment;
+import com.keithsmyth.resistance.feature.game.GameFragment;
+import com.keithsmyth.resistance.feature.lobby.presentation.LobbyFragment;
 import com.keithsmyth.resistance.navigation.DisplayThrowable;
 import com.keithsmyth.resistance.navigation.ErrorView;
 import com.keithsmyth.resistance.navigation.Navigation;
 import com.keithsmyth.resistance.navigation.Navigator;
-import com.keithsmyth.resistance.welcome.presentation.WelcomeFragment;
+import com.keithsmyth.resistance.feature.welcome.presentation.WelcomeFragment;
 
 public class MainActivity extends AppCompatActivity implements Navigator {
 

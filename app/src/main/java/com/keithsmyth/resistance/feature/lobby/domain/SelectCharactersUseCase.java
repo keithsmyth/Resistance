@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.lobby.domain;
+package com.keithsmyth.resistance.feature.lobby.domain;
 
 import com.keithsmyth.resistance.data.CharacterProvider;
 import com.keithsmyth.resistance.data.GameProvider;
@@ -6,18 +6,15 @@ import com.keithsmyth.resistance.data.GameRulesProvider;
 import com.keithsmyth.resistance.data.UserProvider;
 import com.keithsmyth.resistance.data.model.CharacterDataModel;
 import com.keithsmyth.resistance.data.model.GameRulesDataModel;
-import com.keithsmyth.resistance.lobby.exception.NumberPlayersException;
-import com.keithsmyth.resistance.lobby.exception.NumberCharactersException;
-import com.keithsmyth.resistance.lobby.mapper.CharacterMapper;
-import com.keithsmyth.resistance.lobby.model.CharacterViewModel;
-import com.keithsmyth.resistance.lobby.model.PlayerViewModel;
+import com.keithsmyth.resistance.feature.lobby.exception.NumberPlayersException;
+import com.keithsmyth.resistance.feature.lobby.exception.NumberCharactersException;
+import com.keithsmyth.resistance.feature.lobby.mapper.CharacterMapper;
+import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
+import com.keithsmyth.resistance.feature.lobby.model.PlayerViewModel;
 import com.keithsmyth.resistance.navigation.Navigation;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import rx.Observable;
-import rx.Subscriber;
 
 import static com.keithsmyth.resistance.data.GameRulesProvider.MAX_PLAYERS;
 import static com.keithsmyth.resistance.data.GameRulesProvider.MIN_PLAYERS;

@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.welcome.domain;
+package com.keithsmyth.resistance.feature.welcome.domain;
 
 import com.keithsmyth.resistance.data.GameProvider;
 import com.keithsmyth.resistance.data.UserProvider;

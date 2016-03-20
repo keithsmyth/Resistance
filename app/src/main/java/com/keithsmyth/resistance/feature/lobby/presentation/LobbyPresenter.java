@@ -1,13 +1,13 @@
-package com.keithsmyth.resistance.lobby.presentation;
+package com.keithsmyth.resistance.feature.lobby.presentation;
 
 import com.keithsmyth.resistance.Injector;
 import com.keithsmyth.resistance.Presenter;
 import com.keithsmyth.resistance.PresenterFactory;
 import com.keithsmyth.resistance.RxUtil;
-import com.keithsmyth.resistance.lobby.domain.AddPlayerUseCase;
-import com.keithsmyth.resistance.lobby.domain.SelectCharactersUseCase;
-import com.keithsmyth.resistance.lobby.model.CharacterViewModel;
-import com.keithsmyth.resistance.lobby.model.PlayerViewModel;
+import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
+import com.keithsmyth.resistance.feature.lobby.domain.SelectCharactersUseCase;
+import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
+import com.keithsmyth.resistance.feature.lobby.model.PlayerViewModel;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
 

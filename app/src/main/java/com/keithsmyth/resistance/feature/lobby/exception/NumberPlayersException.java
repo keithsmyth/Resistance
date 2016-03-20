@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.lobby.exception;
+package com.keithsmyth.resistance.feature.lobby.exception;
 
 import android.content.Context;
 

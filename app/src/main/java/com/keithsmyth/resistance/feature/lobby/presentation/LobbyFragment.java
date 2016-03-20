@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.lobby.presentation;
+package com.keithsmyth.resistance.feature.lobby.presentation;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 
 import com.keithsmyth.resistance.PresenterLoader;
 import com.keithsmyth.resistance.R;
-import com.keithsmyth.resistance.lobby.model.CharacterViewModel;
-import com.keithsmyth.resistance.lobby.model.PlayerViewModel;
+import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
+import com.keithsmyth.resistance.feature.lobby.model.PlayerViewModel;
 
 import java.util.List;
 

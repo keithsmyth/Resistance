@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.lobby.model;
+package com.keithsmyth.resistance.feature.lobby.model;
 
 public class PlayerViewModel {
 

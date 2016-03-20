@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.welcome.domain;
+package com.keithsmyth.resistance.feature.welcome.domain;
 
 import com.keithsmyth.resistance.RxUtil;
 import com.keithsmyth.resistance.data.GameProvider;
@@ -11,7 +11,6 @@ import java.util.List;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 public class NewGameUseCase {
 

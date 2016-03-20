@@ -1,20 +1,15 @@
-package com.keithsmyth.resistance.welcome.domain;
+package com.keithsmyth.resistance.feature.welcome.domain;
 
 import com.keithsmyth.resistance.RxUtil;
 import com.keithsmyth.resistance.data.GameProvider;
 import com.keithsmyth.resistance.data.UserProvider;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
-import com.keithsmyth.resistance.welcome.exception.GameNotExistException;
+import com.keithsmyth.resistance.feature.welcome.exception.GameNotExistException;
 
-import java.util.concurrent.TimeUnit;
-
-import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 public class JoinGameUseCase {
 

@@ -1,7 +1,7 @@
-package com.keithsmyth.resistance.lobby.mapper;
+package com.keithsmyth.resistance.feature.lobby.mapper;
 
 import com.keithsmyth.resistance.data.model.CharacterDataModel;
-import com.keithsmyth.resistance.lobby.model.CharacterViewModel;
+import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 
 public class CharacterMapper {
 

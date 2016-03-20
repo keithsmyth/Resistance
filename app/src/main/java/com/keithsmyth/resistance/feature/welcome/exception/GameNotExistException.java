@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.welcome.exception;
+package com.keithsmyth.resistance.feature.welcome.exception;
 
 import android.content.Context;
 

@@ -7,12 +7,12 @@ import com.keithsmyth.resistance.data.GameProvider;
 import com.keithsmyth.resistance.data.GameRulesProvider;
 import com.keithsmyth.resistance.data.UserProvider;
 import com.keithsmyth.resistance.data.prefs.SharedPreferencesWrapper;
-import com.keithsmyth.resistance.lobby.domain.AddPlayerUseCase;
-import com.keithsmyth.resistance.lobby.domain.SelectCharactersUseCase;
+import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
+import com.keithsmyth.resistance.feature.lobby.domain.SelectCharactersUseCase;
 import com.keithsmyth.resistance.navigation.Navigation;
-import com.keithsmyth.resistance.welcome.domain.JoinGameUseCase;
-import com.keithsmyth.resistance.welcome.domain.NewGameUseCase;
-import com.keithsmyth.resistance.welcome.domain.RestorePreferencesUseCase;
+import com.keithsmyth.resistance.feature.welcome.domain.JoinGameUseCase;
+import com.keithsmyth.resistance.feature.welcome.domain.NewGameUseCase;
+import com.keithsmyth.resistance.feature.welcome.domain.RestorePreferencesUseCase;
 
 public class Injector {
 

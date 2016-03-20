@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.lobby.presentation;
+package com.keithsmyth.resistance.feature.lobby.presentation;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.keithsmyth.resistance.R;
-import com.keithsmyth.resistance.lobby.model.PlayerViewModel;
+import com.keithsmyth.resistance.feature.lobby.model.PlayerViewModel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
-package com.keithsmyth.resistance.lobby.presentation;
+package com.keithsmyth.resistance.feature.lobby.presentation;
 
-import com.keithsmyth.resistance.lobby.model.CharacterViewModel;
-import com.keithsmyth.resistance.lobby.model.PlayerViewModel;
+import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
+import com.keithsmyth.resistance.feature.lobby.model.PlayerViewModel;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.game;
+package com.keithsmyth.resistance.feature.game;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

@@ -1,8 +1,8 @@
-package com.keithsmyth.resistance.lobby.domain;
+package com.keithsmyth.resistance.feature.lobby.domain;
 
 import com.keithsmyth.resistance.data.UserProvider;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
-import com.keithsmyth.resistance.lobby.model.PlayerViewModel;
+import com.keithsmyth.resistance.feature.lobby.model.PlayerViewModel;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
