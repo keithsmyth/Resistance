@@ -10,6 +10,7 @@ import com.keithsmyth.resistance.navigation.Navigation;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class JoinGameUseCase {
 
@@ -28,10 +29,12 @@ public class JoinGameUseCase {
     public void execute(int gameId, String playerName) {
         userProvider.setName(playerName);
         userProvider.setGameId(gameId);
+        gameInfoProvider.setCurrentGameId(gameId);
 
         // check game state, navigate to correct screen
         RxUtil.unsubscribe(gameStateSubscription);
         gameStateSubscription = gameInfoProvider.getGameState()
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Action1<Integer>() {
                 @Override
@@ -42,6 +45,7 @@ public class JoinGameUseCase {
             }, new Action1<Throwable>() {
                 @Override
                 public void call(Throwable throwable) {
+                    RxUtil.unsubscribe(gameStateSubscription);
                     navigation.showError(new GenericDisplayThrowable(throwable));
                 }
             });

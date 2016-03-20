@@ -17,13 +17,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 public class GameInfoProvider {
 
@@ -48,8 +46,6 @@ public class GameInfoProvider {
     private final FirebaseFactory firebaseFactory;
     private final UserProvider userProvider;
 
-    @GameState private int gameState;
-
     public GameInfoProvider(SharedPreferencesWrapper prefs, FirebaseFactory firebaseFactory, UserProvider userProvider) {
         this.prefs = prefs;
         this.firebaseFactory = firebaseFactory;
@@ -66,16 +62,6 @@ public class GameInfoProvider {
 
     public void clearCurrentGameId() {
         prefs.get().edit().remove(KEY_CURRENT_GAME_ID).apply();
-    }
-
-    public Observable<Integer> getGameState() {
-        return Observable.from(new Integer[]{gameState})
-            .subscribeOn(Schedulers.io())
-            .delay(1, TimeUnit.SECONDS);
-    }
-
-    public void setGameState(@GameState int gameState) {
-        this.gameState = gameState;
     }
 
     public Observable<Integer> createGame() {
@@ -99,6 +85,40 @@ public class GameInfoProvider {
                     });
             }
         });
+    }
+
+    public Observable<Integer> getGameState() {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(final Subscriber<? super Integer> subscriber) {
+                final Firebase ref = firebaseFactory.getGameStateRef(getCurrentGameId());
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        final Integer gameState = dataSnapshot.getValue(Integer.class);
+                        if (gameState != null) {
+                            subscriber.onNext(gameState);
+                        } else {
+                            subscriber.onNext(STATE_NONE);
+                        }
+                        subscriber.onCompleted();
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+                        subscriber.onError(firebaseError.toException());
+                    }
+                });
+            }
+        });
+    }
+
+    public void setGameState(@GameState int gameState) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Observable<GameInfoDataModel> getGameInfo() {
+        throw new UnsupportedOperationException();
     }
 
     private Observable<Set<Integer>> getActiveGames() {

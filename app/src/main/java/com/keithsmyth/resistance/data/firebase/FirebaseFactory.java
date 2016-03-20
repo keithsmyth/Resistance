@@ -9,6 +9,7 @@ public class FirebaseFactory {
 
     private static final String ACTIVE_GAMES_PATH = "/activeGames";
     private static final String GAME_INFO_PATH = "/games/%s/info";
+    private static final String GAME_STATE_PATH = "/games/%s/info/status";
 
     public Firebase getActiveGamesRef() {
         return new Firebase(FIREBASE_URL + ACTIVE_GAMES_PATH);
@@ -16,5 +17,9 @@ public class FirebaseFactory {
 
     public Firebase getGameRef(int gameId) {
         return new Firebase(FIREBASE_URL + String.format(GAME_INFO_PATH, gameId));
+    }
+
+    public Firebase getGameStateRef(int gameId) {
+        return new Firebase(FIREBASE_URL + String.format(GAME_STATE_PATH, gameId));
     }
 }

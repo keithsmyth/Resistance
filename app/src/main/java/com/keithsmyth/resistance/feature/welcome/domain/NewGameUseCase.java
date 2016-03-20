@@ -9,6 +9,7 @@ import com.keithsmyth.resistance.navigation.Navigation;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class NewGameUseCase {
 
@@ -29,6 +30,7 @@ public class NewGameUseCase {
 
         RxUtil.unsubscribe(createGameSubscription);
         createGameSubscription = gameInfoProvider.createGame()
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Action1<Integer>() {
                 @Override
