@@ -96,6 +96,6 @@ public class Injector {
     }
 
     public static SelectCharactersUseCase selectCharactersUseCase() {
-        return new SelectCharactersUseCase(navigation(), userProvider(), gameInfoProvider(), characterProvider(), gameRulesProvider());
+        return new SelectCharactersUseCase(navigation(), gameInfoProvider(), characterProvider(), gameRulesProvider());
     }
 }

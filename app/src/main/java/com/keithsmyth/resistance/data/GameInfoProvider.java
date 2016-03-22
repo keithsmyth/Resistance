@@ -103,7 +103,8 @@ public class GameInfoProvider {
     }
 
     public void setGameState(@GameState int gameState) {
-        throw new UnsupportedOperationException();
+        final Firebase ref = firebaseFactory.getGameStateRef(getCurrentGameId());
+        ref.setValue(gameState);
     }
 
     public Observable<ModelActionWrapper<PlayerDataModel>> getPlayers() {
@@ -157,6 +158,11 @@ public class GameInfoProvider {
         final Map<String, Object> newPlayerIdToNameMap = new HashMap<>(1);
         newPlayerIdToNameMap.put(userId, name);
         ref.updateChildren(newPlayerIdToNameMap);
+    }
+
+    public void setAssignedCharacters(Map<String, Object> mapPlayerIdToCharacter) {
+        final Firebase ref = firebaseFactory.getAssignedCharactersRef(getCurrentGameId());
+        ref.setValue(mapPlayerIdToCharacter);
     }
 
     public Observable<GameInfoDataModel> getGameInfo() {
