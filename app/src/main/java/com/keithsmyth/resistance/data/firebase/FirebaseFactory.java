@@ -19,7 +19,7 @@ public class FirebaseFactory {
         return new Firebase(FIREBASE_URL + ACTIVE_GAMES_PATH);
     }
 
-    public Firebase getGameRef(int gameId) {
+    public Firebase getGameInfoRef(int gameId) {
         return new Firebase(FIREBASE_URL + String.format(GAME_INFO_PATH, gameId));
     }
 

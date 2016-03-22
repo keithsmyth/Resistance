@@ -17,4 +17,9 @@
     <string name="lobby_number_characters_error">Must have max %1$s good (is %2$s) and max %3$s bad (is %4$s)</string>
 
     <string name="game_title">Game</string>
+    <string name="game_character_info">%1$s\nYou are %2$s (%3$s)\n%4$s\n%5$s\nCharacters are\n%6$s</string>
+    <string name="game_info_title">Info</string>
+
+    <string name="good">Good</string>
+    <string name="bad">Bad</string>
 </resources>

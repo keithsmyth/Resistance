@@ -8,6 +8,7 @@ import com.keithsmyth.resistance.data.GameRulesProvider;
 import com.keithsmyth.resistance.data.UserProvider;
 import com.keithsmyth.resistance.data.firebase.FirebaseFactory;
 import com.keithsmyth.resistance.data.prefs.SharedPreferencesWrapper;
+import com.keithsmyth.resistance.feature.game.domain.DisplayCharacterUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.SelectCharactersUseCase;
 import com.keithsmyth.resistance.feature.welcome.domain.JoinGameUseCase;
@@ -97,5 +98,9 @@ public class Injector {
 
     public static SelectCharactersUseCase selectCharactersUseCase() {
         return new SelectCharactersUseCase(navigation(), gameInfoProvider(), characterProvider(), gameRulesProvider());
+    }
+
+    public static DisplayCharacterUseCase displayCharacterUseCase() {
+        return new DisplayCharacterUseCase(userProvider(), gameInfoProvider(), characterProvider());
     }
 }

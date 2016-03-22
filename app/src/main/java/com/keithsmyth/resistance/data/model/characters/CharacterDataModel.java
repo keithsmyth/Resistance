@@ -10,7 +10,7 @@ public abstract class CharacterDataModel {
         this.isBad = isBad;
     }
 
-    public abstract boolean canSee(CharacterDataModel characterDataModel);
+    public abstract boolean isRevealed(CharacterDataModel characterDataModel);
 
-    public abstract String canSeeDescription();
+    public abstract String revealedDescription();
 }

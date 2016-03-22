@@ -166,7 +166,13 @@ public class GameInfoProvider {
     }
 
     public Observable<GameInfoDataModel> getGameInfo() {
-        throw new UnsupportedOperationException();
+        final Firebase ref  = firebaseFactory.getGameInfoRef(getCurrentGameId());
+        return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<GameInfoDataModel>() {
+            @Override
+            public GameInfoDataModel map(DataSnapshot dataSnapshot) {
+                return dataSnapshot.getValue(GameInfoDataModel.class);
+            }
+        }).getObservable();
     }
 
     private Observable<Set<Integer>> getActiveGames() {
@@ -197,7 +203,7 @@ public class GameInfoProvider {
     }
 
     private void createGameInfoModel(final Integer gameId, final Subscriber<? super Integer> subscriber) {
-        final Firebase ref = firebaseFactory.getGameRef(gameId);
+        final Firebase ref = firebaseFactory.getGameInfoRef(gameId);
         final GameInfoDataModel gameInfoDataModel = new GameInfoDataModel();
         gameInfoDataModel.setOwnerId(userProvider.getId());
         gameInfoDataModel.setStatus(STATE_NEW);
