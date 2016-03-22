@@ -11,6 +11,7 @@ public class FirebaseFactory {
     private static final String GAME_INFO_PATH = "/games/%s/info";
     private static final String GAME_STATE_PATH = "/games/%s/info/status";
     private static final String GAME_PLAYERS_PATH = "/games/%s/info/mapPlayerIdToName";
+    private static final String GAME_PLAYER_ADDED_PATH = "/games/%s/info/mapPlayerIdToName/%s";
     private static final String GAME_OWNER_PATH = "/games/%s/info/owner";
 
     public Firebase getActiveGamesRef() {
@@ -31,5 +32,9 @@ public class FirebaseFactory {
 
     public Firebase getOwnerRef(int gameId) {
         return new Firebase(FIREBASE_URL + String.format(GAME_OWNER_PATH, gameId));
+    }
+
+    public Firebase getPlayerAddedRef(int gameId, String userId) {
+        return new Firebase(FIREBASE_URL + String.format(GAME_PLAYER_ADDED_PATH, gameId, userId));
     }
 }

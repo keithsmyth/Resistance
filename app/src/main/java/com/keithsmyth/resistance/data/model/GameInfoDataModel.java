@@ -8,7 +8,7 @@ public class GameInfoDataModel {
     private int status;
     private Map<String, String> mapPlayerIdToName;
     private Map<String, Integer> mapPlayerIdToOrder;
-    private Map<String, String> mapCharacterToPlayerId;
+    private Map<String, String> mapPlayerIdToCharacter;
 
     public String getOwnerId() {
         return ownerId;
@@ -42,11 +42,11 @@ public class GameInfoDataModel {
         this.mapPlayerIdToOrder = mapPlayerIdToOrder;
     }
 
-    public Map<String, String> getMapCharacterToPlayerId() {
-        return mapCharacterToPlayerId;
+    public Map<String, String> getMapPlayerIdToCharacter() {
+        return mapPlayerIdToCharacter;
     }
 
-    public void setMapCharacterToPlayerId(Map<String, String> mapCharacterToPlayerId) {
-        this.mapCharacterToPlayerId = mapCharacterToPlayerId;
+    public void setMapPlayerIdToCharacter(Map<String, String> mapPlayerIdToCharacter) {
+        this.mapPlayerIdToCharacter = mapPlayerIdToCharacter;
     }
 }

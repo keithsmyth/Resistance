@@ -116,22 +116,20 @@ public class GameInfoProvider {
                 return dataSnapshot;
             }
         };
-        final Observable<ModelActionWrapper<DataSnapshot>> observable = new FirebaseChildEventWrapper<>(ref, mapper, mapper).getObservable();
+        final Observable<ModelActionWrapper<DataSnapshot>> playersObservable =
+            new FirebaseChildEventWrapper<>(ref, mapper, mapper).getObservable();
 
-        return getOwner()
-            .zipWith(observable, new Func2<String, ModelActionWrapper<DataSnapshot>, ModelActionWrapper<PlayerDataModel>>() {
-                @Override
-                public ModelActionWrapper<PlayerDataModel> call(String ownerId, ModelActionWrapper<DataSnapshot> dataSnapshotModelActionWrapper) {
-                    final DataSnapshot dataSnapshot = dataSnapshotModelActionWrapper.dataModel;
-                    final String id = dataSnapshot.getKey();
-                    final String name = dataSnapshot.getValue().toString();
-                    final boolean isOwner = userId.equals(ownerId);
-                    final boolean isMe = userId.equals(id);
-                    return new ModelActionWrapper<>(new PlayerDataModel(id, name, isOwner, isMe), dataSnapshotModelActionWrapper.isAdded);
-                }
-            });
-
-
+        return Observable.combineLatest(getOwner(), playersObservable, new Func2<String, ModelActionWrapper<DataSnapshot>, ModelActionWrapper<PlayerDataModel>>() {
+            @Override
+            public ModelActionWrapper<PlayerDataModel> call(String ownerId, ModelActionWrapper<DataSnapshot> dataSnapshotModelActionWrapper) {
+                final DataSnapshot dataSnapshot = dataSnapshotModelActionWrapper.dataModel;
+                final String id = dataSnapshot.getKey();
+                final String name = dataSnapshot.getValue().toString();
+                final boolean isOwner = userId.equals(ownerId);
+                final boolean isMe = userId.equals(id);
+                return new ModelActionWrapper<>(new PlayerDataModel(id, name, isOwner, isMe), dataSnapshotModelActionWrapper.isAdded);
+            }
+        });
     }
 
     private Observable<String> getOwner() {
@@ -142,6 +140,23 @@ public class GameInfoProvider {
                 return dataSnapshot.getValue(String.class);
             }
         }).getObservable();
+    }
+
+    public Observable<Boolean> isPlayerInGame(String userId) {
+        final Firebase ref = firebaseFactory.getPlayerAddedRef(getCurrentGameId(), userId);
+        return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<Boolean>() {
+            @Override
+            public Boolean map(DataSnapshot dataSnapshot) {
+                return dataSnapshot.exists();
+            }
+        }).getObservable();
+    }
+
+    public void addPlayerToGame(String userId, String name) {
+        final Firebase ref = firebaseFactory.getPlayersRef(getCurrentGameId());
+        final Map<String, Object> newPlayerIdToNameMap = new HashMap<>(1);
+        newPlayerIdToNameMap.put(userId, name);
+        ref.updateChildren(newPlayerIdToNameMap);
     }
 
     public Observable<GameInfoDataModel> getGameInfo() {
@@ -193,7 +208,7 @@ public class GameInfoProvider {
         });
     }
 
-    private void addGameToActiveGames(final Integer gameId) {
+    private void addGameToActiveGames(Integer gameId) {
         final Firebase ref = firebaseFactory.getActiveGamesRef();
         final Map<String, Object> newActiveGameIdMap = new HashMap<>(1);
         newActiveGameIdMap.put(gameId.toString(), "");

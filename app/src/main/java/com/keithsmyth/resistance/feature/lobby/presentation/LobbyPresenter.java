@@ -82,6 +82,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     public void onDestroyed() {
         detachView();
         RxUtil.unsubscribe(subscription);
+        addPlayerUseCase.destroy();
     }
 
     public boolean isCharacterSelected(CharacterViewModel characterViewModel) {
