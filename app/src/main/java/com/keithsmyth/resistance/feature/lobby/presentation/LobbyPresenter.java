@@ -9,6 +9,7 @@ import com.keithsmyth.resistance.data.model.ModelActionWrapper;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.SelectCharactersUseCase;
+import com.keithsmyth.resistance.feature.lobby.domain.StartGameUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.WatchLobbyStateUseCase;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
@@ -29,6 +30,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     private final AddPlayerUseCase addPlayerUseCase;
     private final SelectCharactersUseCase selectCharactersUseCase;
     private final WatchLobbyStateUseCase watchLobbyStateUseCase;
+    private final StartGameUseCase startGameUseCase;
     private final GameInfoProvider gameInfoProvider;
 
     private final List<PlayerDataModel> playerDataModels;
@@ -38,11 +40,12 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     private LobbyView lobbyView;
     private Subscription subscription;
 
-    public LobbyPresenter(Navigation navigation, AddPlayerUseCase addPlayerUseCase, SelectCharactersUseCase selectCharactersUseCase, WatchLobbyStateUseCase watchLobbyStateUseCase, GameInfoProvider gameInfoProvider) {
+    public LobbyPresenter(Navigation navigation, AddPlayerUseCase addPlayerUseCase, SelectCharactersUseCase selectCharactersUseCase, WatchLobbyStateUseCase watchLobbyStateUseCase, StartGameUseCase startGameUseCase, GameInfoProvider gameInfoProvider) {
         this.navigation = navigation;
         this.addPlayerUseCase = addPlayerUseCase;
         this.selectCharactersUseCase = selectCharactersUseCase;
         this.watchLobbyStateUseCase = watchLobbyStateUseCase;
+        this.startGameUseCase = startGameUseCase;
         this.gameInfoProvider = gameInfoProvider;
         playerDataModels = new ArrayList<>();
         characterViewModels = new ArrayList<>();
@@ -114,7 +117,9 @@ public class LobbyPresenter implements Presenter<LobbyView> {
 
     public void startGame() {
         final List<CharacterViewModel> selectedCharacters = new ArrayList<>(selectedCharacterSet);
-        selectCharactersUseCase.selectCharacters(selectedCharacters, playerDataModels);
+        if (selectCharactersUseCase.execute(selectedCharacters, playerDataModels)) {
+            startGameUseCase.execute();
+        }
     }
 
     private void onPlayerAdded(PlayerDataModel playerDataModel) {
@@ -136,13 +141,12 @@ public class LobbyPresenter implements Presenter<LobbyView> {
         if (lobbyView != null) {
             lobbyView.removePlayer(playerDataModel);
         }
-
     }
 
     public static final PresenterFactory<LobbyPresenter> FACTORY = new PresenterFactory<LobbyPresenter>() {
         @Override
         public LobbyPresenter create() {
-            return new LobbyPresenter(Injector.navigation(), Injector.addPlayerUseCase(), Injector.selectCharactersUseCase(), Injector.watchLobbyStateUseCase(), Injector.gameInfoProvider());
+            return new LobbyPresenter(Injector.navigation(), Injector.addPlayerUseCase(), Injector.selectCharactersUseCase(), Injector.watchLobbyStateUseCase(), Injector.startGameUseCase(), Injector.gameInfoProvider());
         }
     };
 }

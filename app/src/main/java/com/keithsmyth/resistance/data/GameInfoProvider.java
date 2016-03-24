@@ -16,8 +16,10 @@ import com.keithsmyth.resistance.data.prefs.SharedPreferencesWrapper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -28,6 +30,11 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
+// TODO: Ensure a single GameInfoDataModel is cached when current game id is set.
+// TODO: Ensure it can be turned off - e.g. setActive(boolean)
+// TODO: get and watch calls should be marked accordingly
+// TODO: always return Observable watching sets, and ensure we're using them correctly
+// TODO: Use Rx Single for Observables with 1 response
 public class GameInfoProvider {
 
     @Retention(RetentionPolicy.SOURCE)
@@ -119,7 +126,7 @@ public class GameInfoProvider {
         ref.setValue(gameState);
     }
 
-    public Observable<ModelActionWrapper<PlayerDataModel>> getPlayers() {
+    public Observable<ModelActionWrapper<PlayerDataModel>> watchPlayers() {
         final String userId = userProvider.getId();
 
         final Firebase ref = firebaseFactory.getPlayersRef(getCurrentGameId());
@@ -143,6 +150,20 @@ public class GameInfoProvider {
                 return new ModelActionWrapper<>(new PlayerDataModel(id, name, isOwner, isMe), dataSnapshotModelActionWrapper.isAdded);
             }
         });
+    }
+
+    public Observable<List<String>> getPlayerIds() {
+        final Firebase ref = firebaseFactory.getPlayersRef(getCurrentGameId());
+        return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<List<String>>() {
+            @Override
+            public List<String> map(DataSnapshot dataSnapshot) {
+                final List<String> playerIds = new ArrayList<>();
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    playerIds.add(childSnapshot.getKey());
+                }
+                return playerIds;
+            }
+        }).getObservable();
     }
 
     private Observable<String> getOwner() {
@@ -219,6 +240,7 @@ public class GameInfoProvider {
         final GameInfoDataModel gameInfoDataModel = new GameInfoDataModel();
         gameInfoDataModel.setOwnerId(userProvider.getId());
         gameInfoDataModel.setStatus(STATE_NEW);
+        gameInfoDataModel.setVersion(userProvider.getClientVersion());
         ref.setValue(gameInfoDataModel, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {

@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.keithsmyth.resistance.data.CharacterProvider;
 import com.keithsmyth.resistance.data.GameInfoProvider;
+import com.keithsmyth.resistance.data.GamePlayProvider;
 import com.keithsmyth.resistance.data.GameRulesProvider;
 import com.keithsmyth.resistance.data.UserProvider;
 import com.keithsmyth.resistance.data.firebase.FirebaseFactory;
@@ -11,6 +12,7 @@ import com.keithsmyth.resistance.data.prefs.SharedPreferencesWrapper;
 import com.keithsmyth.resistance.feature.game.domain.DisplayCharacterUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.SelectCharactersUseCase;
+import com.keithsmyth.resistance.feature.lobby.domain.StartGameUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.WatchLobbyStateUseCase;
 import com.keithsmyth.resistance.feature.welcome.domain.JoinGameUseCase;
 import com.keithsmyth.resistance.feature.welcome.domain.NewGameUseCase;
@@ -25,6 +27,7 @@ public class Injector {
     private static FirebaseFactory firebaseFactory;
     private static UserProvider userProvider;
     private static GameInfoProvider gameInfoProvider;
+    private static GamePlayProvider gamePlayProvider;
     private static CharacterProvider characterProvider;
     private static GameRulesProvider gameRulesProvider;
 
@@ -67,6 +70,13 @@ public class Injector {
         return gameInfoProvider;
     }
 
+    public static GamePlayProvider gamePlayProvider() {
+        if (gamePlayProvider == null) {
+            gamePlayProvider = new GamePlayProvider(gameInfoProvider(), firebaseFactory(), userProvider());
+        }
+        return gamePlayProvider;
+    }
+
     public static CharacterProvider characterProvider() {
         if (characterProvider == null) {
             characterProvider = new CharacterProvider();
@@ -107,5 +117,9 @@ public class Injector {
 
     public static WatchLobbyStateUseCase watchLobbyStateUseCase() {
         return new WatchLobbyStateUseCase(navigation(), gameInfoProvider());
+    }
+
+    public static StartGameUseCase startGameUseCase() {
+        return new StartGameUseCase(navigation(), gameInfoProvider(), gamePlayProvider());
     }
 }

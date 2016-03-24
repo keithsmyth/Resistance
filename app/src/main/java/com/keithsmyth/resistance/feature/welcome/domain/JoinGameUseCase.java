@@ -43,7 +43,7 @@ public class JoinGameUseCase {
                 @Override
                 public void call(GameInfoDataModel gameInfoDataModel) {
                     RxUtil.unsubscribe(gameStateSubscription);
-                    onGameStateReturned(gameInfoDataModel);
+                    onGameInfoReturned(gameInfoDataModel);
                 }
             }, new Action1<Throwable>() {
                 @Override
@@ -58,7 +58,7 @@ public class JoinGameUseCase {
         RxUtil.unsubscribe(gameStateSubscription);
     }
 
-    private void onGameStateReturned(GameInfoDataModel gameInfoDataModel) {
+    private void onGameInfoReturned(GameInfoDataModel gameInfoDataModel) {
         final String clientVersion = userProvider.getClientVersion();
         final String requiredVersion = gameInfoDataModel.getVersion();
         if (!clientVersion.equals(requiredVersion)) {

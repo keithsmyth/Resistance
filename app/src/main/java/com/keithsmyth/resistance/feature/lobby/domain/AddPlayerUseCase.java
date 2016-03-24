@@ -33,7 +33,7 @@ public class AddPlayerUseCase {
         ensurePlayerAdded();
 
         // watch players feed
-        return gameInfoProvider.getPlayers();
+        return gameInfoProvider.watchPlayers();
     }
 
     public void destroy() {

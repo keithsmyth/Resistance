@@ -2,6 +2,7 @@ package com.keithsmyth.resistance.feature.lobby.domain;
 
 import com.keithsmyth.resistance.data.CharacterProvider;
 import com.keithsmyth.resistance.data.GameInfoProvider;
+import com.keithsmyth.resistance.data.GamePlayProvider;
 import com.keithsmyth.resistance.data.GameRulesProvider;
 import com.keithsmyth.resistance.data.model.GameRulesDataModel;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
@@ -46,7 +47,7 @@ public class SelectCharactersUseCase {
         return characters;
     }
 
-    public void selectCharacters(List<CharacterViewModel> characterViewModels, List<PlayerDataModel> playerDataModels) {
+    public boolean execute(List<CharacterViewModel> characterViewModels, List<PlayerDataModel> playerDataModels) {
         // lock down lobby
         gameInfoProvider.setGameState(GameInfoProvider.STATE_STARTING);
 
@@ -56,7 +57,7 @@ public class SelectCharactersUseCase {
             gameInfoProvider.setGameState(GameInfoProvider.STATE_NEW);
             final NumberPlayersException numberPlayersException = new NumberPlayersException(MIN_PLAYERS, MAX_PLAYERS, numberOfPlayers);
             navigation.showError(numberPlayersException);
-            return;
+            return false;
         }
 
         // verify good / bad ratio
@@ -74,7 +75,7 @@ public class SelectCharactersUseCase {
             gameInfoProvider.setGameState(GameInfoProvider.STATE_NEW);
             final NumberCharactersException numberCharactersException = new NumberCharactersException(gameRulesDataModel.totalGoodPlayers, goodCharacters, gameRulesDataModel.totalBadPlayers, badCharacters);
             navigation.showError(numberCharactersException);
-            return;
+            return false;
         }
 
         // assign characters to players
@@ -99,7 +100,6 @@ public class SelectCharactersUseCase {
         // save
         gameInfoProvider.setAssignedCharacters(mapPlayerIdToCharacter);
 
-        // start the game
-        gameInfoProvider.setGameState(GameInfoProvider.STATE_STARTED);
+        return true;
     }
 }
