@@ -3,7 +3,9 @@ package com.keithsmyth.resistance.feature.welcome.domain;
 import com.keithsmyth.resistance.RxUtil;
 import com.keithsmyth.resistance.data.GameInfoProvider;
 import com.keithsmyth.resistance.data.UserProvider;
+import com.keithsmyth.resistance.data.model.GameInfoDataModel;
 import com.keithsmyth.resistance.feature.welcome.exception.GameNotExistException;
+import com.keithsmyth.resistance.feature.welcome.exception.NotYourGameException;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
 
@@ -33,14 +35,14 @@ public class JoinGameUseCase {
 
         // check game state, navigate to correct screen
         RxUtil.unsubscribe(gameStateSubscription);
-        gameStateSubscription = gameInfoProvider.getGameState()
+        gameStateSubscription = gameInfoProvider.getGameInfo()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Action1<Integer>() {
+            .subscribe(new Action1<GameInfoDataModel>() {
                 @Override
-                public void call(Integer integer) {
+                public void call(GameInfoDataModel gameInfoDataModel) {
                     RxUtil.unsubscribe(gameStateSubscription);
-                    onGameStateReturned(integer);
+                    onGameStateReturned(gameInfoDataModel);
                 }
             }, new Action1<Throwable>() {
                 @Override
@@ -55,21 +57,39 @@ public class JoinGameUseCase {
         RxUtil.unsubscribe(gameStateSubscription);
     }
 
-    private void onGameStateReturned(@GameInfoProvider.GameState int gameState) {
-        switch (gameState) {
+    private void onGameStateReturned(GameInfoDataModel gameInfoDataModel) {
+        switch (gameInfoDataModel.getStatus()) {
             case GameInfoProvider.STATE_NONE:
                 navigation.showError(new GameNotExistException());
                 break;
             case GameInfoProvider.STATE_NEW:
-            case GameInfoProvider.STATE_STARTING:
                 navigation.openLobby();
                 break;
+            case GameInfoProvider.STATE_STARTING:
+                if (isPlayerInGame(gameInfoDataModel)) {
+                    navigation.openLobby();
+                } else {
+                    navigation.showError(new NotYourGameException());
+                }
+                break;
             case GameInfoProvider.STATE_STARTED:
-                navigation.openGame();
+                if (isPlayerInGame(gameInfoDataModel)) {
+                    navigation.openGame();
+                } else {
+                    navigation.showError(new NotYourGameException());
+                }
                 break;
             case GameInfoProvider.STATE_FINISHED:
-                navigation.openEnd();
+                if (isPlayerInGame(gameInfoDataModel)) {
+                    navigation.openEnd();
+                } else {
+                    navigation.showError(new NotYourGameException());
+                }
                 break;
         }
+    }
+
+    private boolean isPlayerInGame(GameInfoDataModel gameInfoDataModel) {
+        return gameInfoDataModel.getMapPlayerIdToName().containsKey(userProvider.getId());
     }
 }
