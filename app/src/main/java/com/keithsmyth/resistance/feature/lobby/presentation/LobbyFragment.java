@@ -25,6 +25,7 @@ public class LobbyFragment extends Fragment implements LobbyView {
     private LobbyPresenter lobbyPresenter;
     private PlayerAdapter playerAdapter;
     private RecyclerView charactersRecycler;
+    private View startGameFab;
 
     public static LobbyFragment create() {
         return new LobbyFragment();
@@ -55,13 +56,7 @@ public class LobbyFragment extends Fragment implements LobbyView {
         playersRecycler.setAdapter(playerAdapter);
 
         charactersRecycler = (RecyclerView) view.findViewById(R.id.characters_recycler_view);
-
-        view.findViewById(R.id.start_game_fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                lobbyPresenter.startGame();
-            }
-        });
+        startGameFab = view.findViewById(R.id.start_game_fab);
     }
 
     @Override
@@ -99,6 +94,14 @@ public class LobbyFragment extends Fragment implements LobbyView {
         characterAdapter.setItems(characters);
         charactersRecycler.setAdapter(characterAdapter);
         charactersRecycler.setVisibility(View.VISIBLE);
+
+        startGameFab.setVisibility(View.VISIBLE);
+        startGameFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lobbyPresenter.startGame();
+            }
+        });
     }
 
     private class LobbyLoaderCallbacks implements LoaderManager.LoaderCallbacks<LobbyPresenter> {

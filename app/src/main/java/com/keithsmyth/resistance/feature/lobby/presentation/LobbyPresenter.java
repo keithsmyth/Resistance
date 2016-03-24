@@ -42,7 +42,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
         this.selectCharactersUseCase = selectCharactersUseCase;
         this.watchLobbyStateUseCase = watchLobbyStateUseCase;
         playerDataModels = new ArrayList<>();
-        characterViewModels=  new ArrayList<>();
+        characterViewModels = new ArrayList<>();
         selectedCharacterSet = new HashSet<>();
     }
 
@@ -112,14 +112,15 @@ public class LobbyPresenter implements Presenter<LobbyView> {
 
     private void onPlayerAdded(PlayerDataModel playerDataModel) {
         playerDataModels.add(playerDataModel);
-        if (lobbyView == null) {
-            return;
+        if (lobbyView != null) {
+            lobbyView.addPlayer(playerDataModel);
         }
-        lobbyView.addPlayer(playerDataModel);
-        if (playerDataModel.isMe) {
+        if (playerDataModel.isMe && playerDataModel.isOwner) {
             characterViewModels.clear();
             characterViewModels.addAll(selectCharactersUseCase.getCharacters());
-            lobbyView.showCharacters(characterViewModels);
+            if (lobbyView != null) {
+                lobbyView.showCharacters(characterViewModels);
+            }
         }
     }
 
