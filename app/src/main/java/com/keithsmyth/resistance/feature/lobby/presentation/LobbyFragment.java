@@ -35,7 +35,6 @@ public class LobbyFragment extends Fragment implements LobbyView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLoaderManager().initLoader(LOADER_ID, null, new LobbyLoaderCallbacks());
-        getActivity().setTitle(R.string.lobby_title);
     }
 
     @Nullable
@@ -69,6 +68,11 @@ public class LobbyFragment extends Fragment implements LobbyView {
     public void onPause() {
         lobbyPresenter.detachView();
         super.onPause();
+    }
+
+    @Override
+    public void setTitle(int currentGameId) {
+        getActivity().setTitle(getString(R.string.lobby_title, currentGameId));
     }
 
     @Override

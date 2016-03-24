@@ -6,6 +6,9 @@ import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 import java.util.List;
 
 public interface LobbyView {
+
+    void setTitle(int currentGameId);
+
     void setPlayers(List<PlayerDataModel> playerDataModels);
 
     void addPlayer(PlayerDataModel playerDataModel);

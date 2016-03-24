@@ -4,6 +4,7 @@ import com.keithsmyth.resistance.Injector;
 import com.keithsmyth.resistance.Presenter;
 import com.keithsmyth.resistance.PresenterFactory;
 import com.keithsmyth.resistance.RxUtil;
+import com.keithsmyth.resistance.data.GameInfoProvider;
 import com.keithsmyth.resistance.data.model.ModelActionWrapper;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
@@ -28,6 +29,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     private final AddPlayerUseCase addPlayerUseCase;
     private final SelectCharactersUseCase selectCharactersUseCase;
     private final WatchLobbyStateUseCase watchLobbyStateUseCase;
+    private final GameInfoProvider gameInfoProvider;
 
     private final List<PlayerDataModel> playerDataModels;
     private final List<CharacterViewModel> characterViewModels;
@@ -36,11 +38,12 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     private LobbyView lobbyView;
     private Subscription subscription;
 
-    public LobbyPresenter(Navigation navigation, AddPlayerUseCase addPlayerUseCase, SelectCharactersUseCase selectCharactersUseCase, WatchLobbyStateUseCase watchLobbyStateUseCase) {
+    public LobbyPresenter(Navigation navigation, AddPlayerUseCase addPlayerUseCase, SelectCharactersUseCase selectCharactersUseCase, WatchLobbyStateUseCase watchLobbyStateUseCase, GameInfoProvider gameInfoProvider) {
         this.navigation = navigation;
         this.addPlayerUseCase = addPlayerUseCase;
         this.selectCharactersUseCase = selectCharactersUseCase;
         this.watchLobbyStateUseCase = watchLobbyStateUseCase;
+        this.gameInfoProvider = gameInfoProvider;
         playerDataModels = new ArrayList<>();
         characterViewModels = new ArrayList<>();
         selectedCharacterSet = new HashSet<>();
@@ -49,6 +52,10 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     @Override
     public void attachView(final LobbyView lobbyView) {
         this.lobbyView = lobbyView;
+
+        this.lobbyView.setTitle(gameInfoProvider.getCurrentGameId());
+
+        // run add player use case
         if (playerDataModels.isEmpty()) {
             RxUtil.unsubscribe(subscription);
             subscription = addPlayerUseCase.execute()
@@ -135,7 +142,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     public static final PresenterFactory<LobbyPresenter> FACTORY = new PresenterFactory<LobbyPresenter>() {
         @Override
         public LobbyPresenter create() {
-            return new LobbyPresenter(Injector.navigation(), Injector.addPlayerUseCase(), Injector.selectCharactersUseCase(), Injector.watchLobbyStateUseCase());
+            return new LobbyPresenter(Injector.navigation(), Injector.addPlayerUseCase(), Injector.selectCharactersUseCase(), Injector.watchLobbyStateUseCase(), Injector.gameInfoProvider());
         }
     };
 }

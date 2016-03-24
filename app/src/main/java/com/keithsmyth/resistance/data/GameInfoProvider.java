@@ -57,7 +57,7 @@ public class GameInfoProvider {
         this.userProvider = userProvider;
     }
 
-    private int getCurrentGameId() {
+    public int getCurrentGameId() {
         return prefs.get().getInt(KEY_CURRENT_GAME_ID, NO_GAME_ID);
     }
 
