@@ -26,6 +26,7 @@ public class CharacterFragment extends Fragment implements CharacterView {
 
     private CharacterPresenter characterPresenter;
     private TextView characterText;
+    private TextView gameIdText;
 
     @Nullable
     @Override
@@ -44,6 +45,7 @@ public class CharacterFragment extends Fragment implements CharacterView {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         characterText = (TextView) view.findViewById(R.id.character_text);
+        gameIdText = (TextView) view.findViewById(R.id.game_id_text);
     }
 
     @Override
@@ -56,6 +58,11 @@ public class CharacterFragment extends Fragment implements CharacterView {
     public void onPause() {
         characterPresenter.detachView();
         super.onPause();
+    }
+
+    @Override
+    public void showGameId(int currentGameId) {
+        gameIdText.setText(getString(R.string.game_id, currentGameId));
     }
 
     @Override
