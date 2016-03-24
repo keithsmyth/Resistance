@@ -4,6 +4,8 @@ public interface Navigator {
 
     void showError(DisplayThrowable displayThrowable);
 
+    void openWelcome();
+
     void openLobby();
 
     void openGame();

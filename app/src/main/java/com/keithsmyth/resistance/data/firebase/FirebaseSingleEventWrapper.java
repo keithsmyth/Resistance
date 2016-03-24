@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.data.model;
+package com.keithsmyth.resistance.data.firebase;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;

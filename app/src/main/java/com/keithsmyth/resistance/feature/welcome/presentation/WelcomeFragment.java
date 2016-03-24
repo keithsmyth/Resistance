@@ -33,6 +33,7 @@ public class WelcomeFragment extends Fragment implements WelcomeView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLoaderManager().initLoader(LOADER_ID, null, new WelcomeLoaderCallbacks());
+        getActivity().setTitle(R.string.app_name);
     }
 
     @Nullable

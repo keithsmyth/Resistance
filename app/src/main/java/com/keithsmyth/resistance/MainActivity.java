@@ -113,7 +113,8 @@ public class MainActivity extends AppCompatActivity implements Navigator {
         }
     }
 
-    private void openWelcome() {
+    @Override
+    public void openWelcome() {
         openFragment(WelcomeFragment.create());
         clearError();
         showDrawer(false);

@@ -101,6 +101,5 @@ public class SelectCharactersUseCase {
 
         // start the game
         gameInfoProvider.setGameState(GameInfoProvider.STATE_STARTED);
-        navigation.openGame();
     }
 }

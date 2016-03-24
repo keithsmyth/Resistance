@@ -11,6 +11,7 @@ import com.keithsmyth.resistance.data.prefs.SharedPreferencesWrapper;
 import com.keithsmyth.resistance.feature.game.domain.DisplayCharacterUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.SelectCharactersUseCase;
+import com.keithsmyth.resistance.feature.lobby.domain.WatchLobbyStateUseCase;
 import com.keithsmyth.resistance.feature.welcome.domain.JoinGameUseCase;
 import com.keithsmyth.resistance.feature.welcome.domain.NewGameUseCase;
 import com.keithsmyth.resistance.feature.welcome.domain.RestorePreferencesUseCase;
@@ -102,5 +103,9 @@ public class Injector {
 
     public static DisplayCharacterUseCase displayCharacterUseCase() {
         return new DisplayCharacterUseCase(userProvider(), gameInfoProvider(), characterProvider());
+    }
+
+    public static WatchLobbyStateUseCase watchLobbyStateUseCase() {
+        return new WatchLobbyStateUseCase(navigation(), gameInfoProvider());
     }
 }

@@ -6,8 +6,9 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.keithsmyth.resistance.data.firebase.FirebaseChildEventWrapper;
+import com.keithsmyth.resistance.data.firebase.FirebaseEventWrapper;
 import com.keithsmyth.resistance.data.firebase.FirebaseFactory;
-import com.keithsmyth.resistance.data.model.FirebaseSingleEventWrapper;
+import com.keithsmyth.resistance.data.firebase.FirebaseSingleEventWrapper;
 import com.keithsmyth.resistance.data.model.GameInfoDataModel;
 import com.keithsmyth.resistance.data.model.ModelActionWrapper;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
@@ -94,6 +95,17 @@ public class GameInfoProvider {
     public Observable<Integer> getGameState() {
         final Firebase ref = firebaseFactory.getGameStateRef(getCurrentGameId());
         return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<Integer>() {
+            @Override
+            public Integer map(DataSnapshot dataSnapshot) {
+                final Integer gameState = dataSnapshot.getValue(Integer.class);
+                return gameState == null ? STATE_NONE : gameState;
+            }
+        }).getObservable();
+    }
+
+    public Observable<Integer> watchGameState() {
+        final Firebase ref = firebaseFactory.getGameStateRef(getCurrentGameId());
+        return new FirebaseEventWrapper<>(ref, new FirebaseEventWrapper.Mapper<Integer>() {
             @Override
             public Integer map(DataSnapshot dataSnapshot) {
                 final Integer gameState = dataSnapshot.getValue(Integer.class);

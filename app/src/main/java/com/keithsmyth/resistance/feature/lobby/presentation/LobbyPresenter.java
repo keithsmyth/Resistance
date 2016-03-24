@@ -8,6 +8,7 @@ import com.keithsmyth.resistance.data.model.ModelActionWrapper;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.SelectCharactersUseCase;
+import com.keithsmyth.resistance.feature.lobby.domain.WatchLobbyStateUseCase;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
@@ -26,6 +27,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     private final Navigation navigation;
     private final AddPlayerUseCase addPlayerUseCase;
     private final SelectCharactersUseCase selectCharactersUseCase;
+    private final WatchLobbyStateUseCase watchLobbyStateUseCase;
 
     private final List<PlayerDataModel> playerDataModels;
     private final List<CharacterViewModel> characterViewModels;
@@ -34,10 +36,11 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     private LobbyView lobbyView;
     private Subscription subscription;
 
-    public LobbyPresenter(Navigation navigation, AddPlayerUseCase addPlayerUseCase, SelectCharactersUseCase selectCharactersUseCase) {
+    public LobbyPresenter(Navigation navigation, AddPlayerUseCase addPlayerUseCase, SelectCharactersUseCase selectCharactersUseCase, WatchLobbyStateUseCase watchLobbyStateUseCase) {
         this.navigation = navigation;
         this.addPlayerUseCase = addPlayerUseCase;
         this.selectCharactersUseCase = selectCharactersUseCase;
+        this.watchLobbyStateUseCase = watchLobbyStateUseCase;
         playerDataModels = new ArrayList<>();
         characterViewModels=  new ArrayList<>();
         selectedCharacterSet = new HashSet<>();
@@ -71,10 +74,15 @@ public class LobbyPresenter implements Presenter<LobbyView> {
                 lobbyView.showCharacters(characterViewModels);
             }
         }
+
+        // watch the game state
+        watchLobbyStateUseCase.execute();
     }
 
     @Override
     public void detachView() {
+        // stop watching the game state
+        watchLobbyStateUseCase.destroy();
         lobbyView = null;
     }
 
@@ -126,7 +134,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     public static final PresenterFactory<LobbyPresenter> FACTORY = new PresenterFactory<LobbyPresenter>() {
         @Override
         public LobbyPresenter create() {
-            return new LobbyPresenter(Injector.navigation(), Injector.addPlayerUseCase(), Injector.selectCharactersUseCase());
+            return new LobbyPresenter(Injector.navigation(), Injector.addPlayerUseCase(), Injector.selectCharactersUseCase(), Injector.watchLobbyStateUseCase());
         }
     };
 }

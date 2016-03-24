@@ -16,6 +16,13 @@ public class Navigation implements Navigator {
     }
 
     @Override
+    public void openWelcome() {
+        if (navigator != null) {
+            navigator.openWelcome();
+        }
+    }
+
+    @Override
     public void openLobby() {
         if (navigator != null) {
             navigator.openLobby();
