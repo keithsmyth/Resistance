@@ -1,6 +1,6 @@
 package com.keithsmyth.resistance.data;
 
-import com.keithsmyth.resistance.data.model.characters.CharacterDataModel;
+import com.keithsmyth.resistance.data.model.CharacterDataModel;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -5,6 +5,7 @@ import com.keithsmyth.resistance.data.GameInfoProvider;
 import com.keithsmyth.resistance.data.UserProvider;
 import com.keithsmyth.resistance.data.model.GameInfoDataModel;
 import com.keithsmyth.resistance.feature.welcome.exception.GameNotExistException;
+import com.keithsmyth.resistance.feature.welcome.exception.InvalidGameVersionException;
 import com.keithsmyth.resistance.feature.welcome.exception.NotYourGameException;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
@@ -58,6 +59,13 @@ public class JoinGameUseCase {
     }
 
     private void onGameStateReturned(GameInfoDataModel gameInfoDataModel) {
+        final String clientVersion = userProvider.getClientVersion();
+        final String requiredVersion = gameInfoDataModel.getVersion();
+        if (!clientVersion.equals(requiredVersion)) {
+            navigation.showError(new InvalidGameVersionException(requiredVersion, clientVersion));
+            return;
+        }
+
         switch (gameInfoDataModel.getStatus()) {
             case GameInfoProvider.STATE_NONE:
                 navigation.showError(new GameNotExistException());

@@ -5,7 +5,7 @@ import com.keithsmyth.resistance.data.GameInfoProvider;
 import com.keithsmyth.resistance.data.GameRulesProvider;
 import com.keithsmyth.resistance.data.model.GameRulesDataModel;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
-import com.keithsmyth.resistance.data.model.characters.CharacterDataModel;
+import com.keithsmyth.resistance.data.model.CharacterDataModel;
 import com.keithsmyth.resistance.feature.lobby.exception.NumberCharactersException;
 import com.keithsmyth.resistance.feature.lobby.exception.NumberPlayersException;
 import com.keithsmyth.resistance.feature.lobby.mapper.CharacterMapper;

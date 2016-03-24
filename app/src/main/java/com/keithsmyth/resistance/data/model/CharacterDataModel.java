@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.data.model.characters;
+package com.keithsmyth.resistance.data.model;
 
 public abstract class CharacterDataModel {
 

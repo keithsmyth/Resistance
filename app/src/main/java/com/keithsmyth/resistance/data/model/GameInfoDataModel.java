@@ -4,11 +4,20 @@ import java.util.Map;
 
 public class GameInfoDataModel {
 
+    private String version;
     private String ownerId;
     private int status;
     private Map<String, String> mapPlayerIdToName;
     private Map<String, Integer> mapPlayerIdToOrder;
     private Map<String, String> mapPlayerIdToCharacter;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public String getOwnerId() {
         return ownerId;

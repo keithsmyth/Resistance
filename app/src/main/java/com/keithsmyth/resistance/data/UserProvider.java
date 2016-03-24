@@ -1,5 +1,6 @@
 package com.keithsmyth.resistance.data;
 
+import com.keithsmyth.resistance.BuildConfig;
 import com.keithsmyth.resistance.data.prefs.SharedPreferencesWrapper;
 
 import java.util.UUID;
@@ -43,5 +44,9 @@ public class UserProvider {
 
     public void setGameId(int gameId) {
         prefs.get().edit().putInt(PLAYER_GAME, gameId).apply();
+    }
+
+    public String getClientVersion() {
+        return BuildConfig.VERSION_NAME;
     }
 }

@@ -4,9 +4,8 @@ import com.keithsmyth.resistance.data.CharacterProvider;
 import com.keithsmyth.resistance.data.GameInfoProvider;
 import com.keithsmyth.resistance.data.UserProvider;
 import com.keithsmyth.resistance.data.model.GameInfoDataModel;
-import com.keithsmyth.resistance.data.model.characters.CharacterDataModel;
+import com.keithsmyth.resistance.data.model.CharacterDataModel;
 import com.keithsmyth.resistance.feature.game.model.PlayerCharacterViewModel;
-import com.keithsmyth.resistance.navigation.Navigation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,6 +57,7 @@ public class DisplayCharacterUseCase {
             }
         }
         Collections.sort(revealedNames);
+        Collections.sort(characters);
 
         return new PlayerCharacterViewModel(name, userCharacter.name, userCharacter.isBad, revealedNames, userCharacter.revealedDescription(), characters);
     }
