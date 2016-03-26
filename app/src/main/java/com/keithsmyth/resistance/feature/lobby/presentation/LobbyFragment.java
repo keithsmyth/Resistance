@@ -3,26 +3,22 @@ package com.keithsmyth.resistance.feature.lobby.presentation;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.keithsmyth.resistance.presentation.PresenterLoader;
 import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
+import com.keithsmyth.resistance.presentation.PresenterDelegate;
 
 import java.util.List;
 
 public class LobbyFragment extends Fragment implements LobbyView {
 
-    private static final int LOADER_ID = 101;
-
-    private LobbyPresenter lobbyPresenter;
+    private PresenterDelegate<LobbyView, LobbyPresenter> presenterDelegate;
     private PlayerAdapter playerAdapter;
     private RecyclerView charactersRecycler;
     private View startGameFab;
@@ -34,7 +30,7 @@ public class LobbyFragment extends Fragment implements LobbyView {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_ID, null, new LobbyLoaderCallbacks());
+        presenterDelegate = new PresenterDelegate<>(getLoaderManager(), getContext(), LobbyPresenter.FACTORY);
     }
 
     @Nullable
@@ -61,12 +57,12 @@ public class LobbyFragment extends Fragment implements LobbyView {
     @Override
     public void onResume() {
         super.onResume();
-        lobbyPresenter.attachView(this);
+        presenterDelegate.onResume(this);
     }
 
     @Override
     public void onPause() {
-        lobbyPresenter.detachView();
+        presenterDelegate.onPause();
         super.onPause();
     }
 
@@ -94,7 +90,7 @@ public class LobbyFragment extends Fragment implements LobbyView {
     public void showCharacters(List<CharacterViewModel> characters) {
         charactersRecycler.setHasFixedSize(true);
         charactersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        final CharacterAdapter characterAdapter = new CharacterAdapter(lobbyPresenter);
+        final CharacterAdapter characterAdapter = new CharacterAdapter(presenterDelegate.presenter);
         characterAdapter.setItems(characters);
         charactersRecycler.setAdapter(characterAdapter);
         charactersRecycler.setVisibility(View.VISIBLE);
@@ -103,26 +99,8 @@ public class LobbyFragment extends Fragment implements LobbyView {
         startGameFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lobbyPresenter.startGame();
+                presenterDelegate.presenter.startGame();
             }
         });
-    }
-
-    private class LobbyLoaderCallbacks implements LoaderManager.LoaderCallbacks<LobbyPresenter> {
-
-        @Override
-        public Loader<LobbyPresenter> onCreateLoader(int id, Bundle args) {
-            return new PresenterLoader<>(getContext(), LobbyPresenter.FACTORY);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<LobbyPresenter> loader, LobbyPresenter data) {
-            lobbyPresenter = data;
-        }
-
-        @Override
-        public void onLoaderReset(Loader<LobbyPresenter> loader) {
-            lobbyPresenter = null;
-        }
     }
 }

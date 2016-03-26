@@ -3,22 +3,17 @@ package com.keithsmyth.resistance.feature.welcome.presentation;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.keithsmyth.resistance.presentation.PresenterLoader;
 import com.keithsmyth.resistance.R;
+import com.keithsmyth.resistance.presentation.PresenterDelegate;
 
 public class WelcomeFragment extends Fragment implements WelcomeView {
 
-    private static final int LOADER_ID = 101;
-
-    private WelcomePresenter welcomePresenter;
-
+    private PresenterDelegate<WelcomeView, WelcomePresenter> presenterDelegate;
     private EditText nameEditText;
     private View newGameButton;
     private View joinGameButton;
@@ -32,7 +27,7 @@ public class WelcomeFragment extends Fragment implements WelcomeView {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_ID, null, new WelcomeLoaderCallbacks());
+        presenterDelegate = new PresenterDelegate<>(getLoaderManager(), getContext(), WelcomePresenter.FACTORY);
         getActivity().setTitle(R.string.app_name);
     }
 
@@ -51,14 +46,14 @@ public class WelcomeFragment extends Fragment implements WelcomeView {
         newGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                welcomePresenter.newGame();
+                presenterDelegate.presenter.newGame();
             }
         });
         joinGameButton = view.findViewById(R.id.join_game_button);
         joinGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                welcomePresenter.joinGame();
+                presenterDelegate.presenter.joinGame();
             }
         });
         gameIdEditText = (EditText) view.findViewById(R.id.game_id_edit_text);
@@ -68,12 +63,12 @@ public class WelcomeFragment extends Fragment implements WelcomeView {
     @Override
     public void onResume() {
         super.onResume();
-        welcomePresenter.attachView(this);
+        presenterDelegate.onResume(this);
     }
 
     @Override
     public void onPause() {
-        welcomePresenter.detachView();
+        presenterDelegate.onPause();
         super.onPause();
     }
 
@@ -124,24 +119,6 @@ public class WelcomeFragment extends Fragment implements WelcomeView {
 
     @Override
     public void onErrorShown() {
-        welcomePresenter.onErrorShown();
-    }
-
-    private class WelcomeLoaderCallbacks implements LoaderManager.LoaderCallbacks<WelcomePresenter> {
-
-        @Override
-        public Loader<WelcomePresenter> onCreateLoader(int id, Bundle args) {
-            return new PresenterLoader<>(getContext(), WelcomePresenter.FACTORY);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<WelcomePresenter> loader, WelcomePresenter data) {
-            welcomePresenter = data;
-        }
-
-        @Override
-        public void onLoaderReset(Loader<WelcomePresenter> loader) {
-            welcomePresenter = null;
-        }
+        presenterDelegate.presenter.onErrorShown();
     }
 }
