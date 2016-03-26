@@ -2,7 +2,7 @@ package com.keithsmyth.resistance.feature.lobby.domain;
 
 import com.keithsmyth.resistance.RxUtil;
 import com.keithsmyth.resistance.data.GameInfoProvider;
-import com.keithsmyth.resistance.feature.lobby.exception.InvalidStatusException;
+import com.keithsmyth.resistance.feature.lobby.exception.InvalidStatusThrowable;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
 
@@ -49,7 +49,7 @@ public class WatchLobbyStateUseCase {
         switch (gameState) {
             case GameInfoProvider.STATE_NONE:
                 navigation.openWelcome();
-                navigation.showError(new InvalidStatusException());
+                navigation.showError(new InvalidStatusThrowable());
                 break;
             case GameInfoProvider.STATE_NEW:
             case GameInfoProvider.STATE_STARTING:

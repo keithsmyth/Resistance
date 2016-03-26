@@ -5,12 +5,12 @@ import android.content.Context;
 import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.navigation.DisplayThrowable;
 
-public class InvalidGameVersionException extends DisplayThrowable {
+public class InvalidGameVersionThrowable extends DisplayThrowable {
 
     private final String requiredVersion;
     private final String clientVersion;
 
-    public InvalidGameVersionException(String requiredVersion, String clientVersion) {
+    public InvalidGameVersionThrowable(String requiredVersion, String clientVersion) {
         this.requiredVersion = requiredVersion;
         this.clientVersion = clientVersion;
     }

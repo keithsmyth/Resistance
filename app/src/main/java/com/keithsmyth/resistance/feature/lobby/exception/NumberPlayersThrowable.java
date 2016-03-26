@@ -8,11 +8,11 @@ import com.keithsmyth.resistance.navigation.DisplayThrowable;
 import static com.keithsmyth.resistance.data.GameRulesProvider.MAX_PLAYERS;
 import static com.keithsmyth.resistance.data.GameRulesProvider.MIN_PLAYERS;
 
-public class NumberPlayersException extends DisplayThrowable {
+public class NumberPlayersThrowable extends DisplayThrowable {
 
     private final int currentPlayers;
 
-    public NumberPlayersException(int currentPlayers) {
+    public NumberPlayersThrowable(int currentPlayers) {
         this.currentPlayers = currentPlayers;
     }
 

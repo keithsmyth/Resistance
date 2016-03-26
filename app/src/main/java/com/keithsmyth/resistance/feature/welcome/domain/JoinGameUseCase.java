@@ -4,9 +4,9 @@ import com.keithsmyth.resistance.RxUtil;
 import com.keithsmyth.resistance.data.GameInfoProvider;
 import com.keithsmyth.resistance.data.UserProvider;
 import com.keithsmyth.resistance.data.model.GameInfoDataModel;
-import com.keithsmyth.resistance.feature.welcome.exception.GameNotExistException;
-import com.keithsmyth.resistance.feature.welcome.exception.InvalidGameVersionException;
-import com.keithsmyth.resistance.feature.welcome.exception.NotYourGameException;
+import com.keithsmyth.resistance.feature.welcome.exception.GameNotExistThrowable;
+import com.keithsmyth.resistance.feature.welcome.exception.InvalidGameVersionThrowable;
+import com.keithsmyth.resistance.feature.welcome.exception.NotYourGameThrowable;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
 
@@ -62,13 +62,13 @@ public class JoinGameUseCase {
         final String clientVersion = userProvider.getClientVersion();
         final String requiredVersion = gameInfoDataModel.getVersion();
         if (!clientVersion.equals(requiredVersion)) {
-            navigation.showError(new InvalidGameVersionException(requiredVersion, clientVersion));
+            navigation.showError(new InvalidGameVersionThrowable(requiredVersion, clientVersion));
             return;
         }
 
         switch (gameInfoDataModel.getStatus()) {
             case GameInfoProvider.STATE_NONE:
-                navigation.showError(new GameNotExistException());
+                navigation.showError(new GameNotExistThrowable());
                 break;
             case GameInfoProvider.STATE_NEW:
                 navigation.openLobby();
@@ -77,21 +77,21 @@ public class JoinGameUseCase {
                 if (isPlayerInGame(gameInfoDataModel)) {
                     navigation.openLobby();
                 } else {
-                    navigation.showError(new NotYourGameException());
+                    navigation.showError(new NotYourGameThrowable());
                 }
                 break;
             case GameInfoProvider.STATE_STARTED:
                 if (isPlayerInGame(gameInfoDataModel)) {
                     navigation.openGame();
                 } else {
-                    navigation.showError(new NotYourGameException());
+                    navigation.showError(new NotYourGameThrowable());
                 }
                 break;
             case GameInfoProvider.STATE_FINISHED:
                 if (isPlayerInGame(gameInfoDataModel)) {
                     navigation.openEnd();
                 } else {
-                    navigation.showError(new NotYourGameException());
+                    navigation.showError(new NotYourGameThrowable());
                 }
                 break;
         }

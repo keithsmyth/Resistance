@@ -5,7 +5,7 @@ import android.content.Context;
 import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.navigation.DisplayThrowable;
 
-public class InvalidStatusException extends DisplayThrowable {
+public class InvalidStatusThrowable extends DisplayThrowable {
 
     @Override
     public String getDisplayMessage(Context context) {

@@ -6,8 +6,8 @@ import com.keithsmyth.resistance.data.GameRulesProvider;
 import com.keithsmyth.resistance.data.model.CharacterDataModel;
 import com.keithsmyth.resistance.data.model.GameRulesDataModel;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
-import com.keithsmyth.resistance.feature.lobby.exception.NumberCharactersException;
-import com.keithsmyth.resistance.feature.lobby.exception.NumberPlayersException;
+import com.keithsmyth.resistance.feature.lobby.exception.NumberCharactersThrowable;
+import com.keithsmyth.resistance.feature.lobby.exception.NumberPlayersThrowable;
 import com.keithsmyth.resistance.feature.lobby.mapper.CharacterMapper;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 import com.keithsmyth.resistance.navigation.Navigation;
@@ -54,8 +54,7 @@ public class SelectCharactersUseCase {
         int numberOfPlayers = playerDataModels.size();
         if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
             gameInfoProvider.setGameState(GameInfoProvider.STATE_NEW);
-            final NumberPlayersException numberPlayersException = new NumberPlayersException(numberOfPlayers);
-            navigation.showError(numberPlayersException);
+            navigation.showError(new NumberPlayersThrowable(numberOfPlayers));
             return false;
         }
 
@@ -72,8 +71,7 @@ public class SelectCharactersUseCase {
         final GameRulesDataModel gameRulesDataModel = gameRulesProvider.getGameRules(numberOfPlayers);
         if (badCharacters > gameRulesDataModel.totalBadPlayers || goodCharacters > gameRulesDataModel.totalGoodPlayers) {
             gameInfoProvider.setGameState(GameInfoProvider.STATE_NEW);
-            final NumberCharactersException numberCharactersException = new NumberCharactersException(gameRulesDataModel.totalGoodPlayers, goodCharacters, gameRulesDataModel.totalBadPlayers, badCharacters);
-            navigation.showError(numberCharactersException);
+            navigation.showError(new NumberCharactersThrowable(gameRulesDataModel.totalGoodPlayers, goodCharacters, gameRulesDataModel.totalBadPlayers, badCharacters));
             return false;
         }
 

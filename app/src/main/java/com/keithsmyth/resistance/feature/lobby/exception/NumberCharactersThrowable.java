@@ -5,14 +5,14 @@ import android.content.Context;
 import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.navigation.DisplayThrowable;
 
-public class NumberCharactersException extends DisplayThrowable {
+public class NumberCharactersThrowable extends DisplayThrowable {
 
     private final int expectedGood;
     private final int actualGood;
     private final int expectedBad;
     private final int actualBad;
 
-    public NumberCharactersException(int expectedGood, int actualGood, int expectedBad, int actualBad) {
+    public NumberCharactersThrowable(int expectedGood, int actualGood, int expectedBad, int actualBad) {
         this.expectedGood = expectedGood;
         this.actualGood = actualGood;
         this.expectedBad = expectedBad;
