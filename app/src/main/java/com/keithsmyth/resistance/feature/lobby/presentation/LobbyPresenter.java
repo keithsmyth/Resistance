@@ -1,8 +1,8 @@
 package com.keithsmyth.resistance.feature.lobby.presentation;
 
 import com.keithsmyth.resistance.Injector;
-import com.keithsmyth.resistance.Presenter;
-import com.keithsmyth.resistance.PresenterFactory;
+import com.keithsmyth.resistance.presentation.Presenter;
+import com.keithsmyth.resistance.presentation.PresenterFactory;
 import com.keithsmyth.resistance.RxUtil;
 import com.keithsmyth.resistance.data.GameInfoProvider;
 import com.keithsmyth.resistance.data.model.ModelActionWrapper;

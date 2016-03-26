@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.keithsmyth.resistance.PresenterLoader;
+import com.keithsmyth.resistance.presentation.PresenterLoader;
 import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.feature.game.model.PlayerCharacterViewModel;
 

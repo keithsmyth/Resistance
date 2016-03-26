@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance;
+package com.keithsmyth.resistance.presentation;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.keithsmyth.resistance.Injector;
+import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.feature.game.presentation.CharacterFragment;
 import com.keithsmyth.resistance.feature.game.presentation.GameFragment;
 import com.keithsmyth.resistance.feature.lobby.presentation.LobbyFragment;

@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.keithsmyth.resistance.PresenterLoader;
+import com.keithsmyth.resistance.presentation.PresenterLoader;
 import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;

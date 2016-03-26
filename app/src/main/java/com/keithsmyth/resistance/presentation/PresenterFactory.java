@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance;
+package com.keithsmyth.resistance.presentation;
 
 public interface PresenterFactory<T> {
 

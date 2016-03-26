@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance;
+package com.keithsmyth.resistance.presentation;
 
 import android.content.Context;
 import android.support.v4.content.Loader;
