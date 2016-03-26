@@ -61,8 +61,4 @@ public class DisplayCharacterUseCase {
 
         return new PlayerCharacterViewModel(name, userCharacter.name, userCharacter.isBad, revealedNames, userCharacter.revealedDescription(), characters);
     }
-
-    public void destroy() {
-        // no op
-    }
 }

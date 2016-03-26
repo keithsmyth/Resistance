@@ -5,7 +5,7 @@ import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 
 import java.util.List;
 
-public interface LobbyView {
+interface LobbyView {
 
     void setTitle(int currentGameId);
 

@@ -7,10 +7,10 @@ import com.keithsmyth.resistance.navigation.DisplayThrowable;
 
 public class NumberCharactersException extends DisplayThrowable {
 
-    public final int expectedGood;
-    public final int actualGood;
-    public final int expectedBad;
-    public final int actualBad;
+    private final int expectedGood;
+    private final int actualGood;
+    private final int expectedBad;
+    private final int actualBad;
 
     public NumberCharactersException(int expectedGood, int actualGood, int expectedBad, int actualBad) {
         this.expectedGood = expectedGood;

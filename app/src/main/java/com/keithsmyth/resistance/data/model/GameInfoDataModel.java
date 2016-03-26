@@ -2,6 +2,7 @@ package com.keithsmyth.resistance.data.model;
 
 import java.util.Map;
 
+@SuppressWarnings({"SameParameterValue", "unused"})
 public class GameInfoDataModel {
 
     private String version;

@@ -46,6 +46,7 @@ public class UserProvider {
         prefs.get().edit().putInt(PLAYER_GAME, gameId).apply();
     }
 
+    @SuppressWarnings("SameReturnValue")
     public String getClientVersion() {
         return BuildConfig.VERSION_NAME;
     }

@@ -2,7 +2,7 @@ package com.keithsmyth.resistance.feature.game.presentation;
 
 import com.keithsmyth.resistance.feature.game.model.PlayerCharacterViewModel;
 
-public interface CharacterView {
+interface CharacterView {
 
     void showGameId(int currentGameId);
 

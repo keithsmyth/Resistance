@@ -2,11 +2,10 @@ package com.keithsmyth.resistance.feature.lobby.domain;
 
 import com.keithsmyth.resistance.data.CharacterProvider;
 import com.keithsmyth.resistance.data.GameInfoProvider;
-import com.keithsmyth.resistance.data.GamePlayProvider;
 import com.keithsmyth.resistance.data.GameRulesProvider;
+import com.keithsmyth.resistance.data.model.CharacterDataModel;
 import com.keithsmyth.resistance.data.model.GameRulesDataModel;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
-import com.keithsmyth.resistance.data.model.CharacterDataModel;
 import com.keithsmyth.resistance.feature.lobby.exception.NumberCharactersException;
 import com.keithsmyth.resistance.feature.lobby.exception.NumberPlayersException;
 import com.keithsmyth.resistance.feature.lobby.mapper.CharacterMapper;
@@ -55,7 +54,7 @@ public class SelectCharactersUseCase {
         int numberOfPlayers = playerDataModels.size();
         if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
             gameInfoProvider.setGameState(GameInfoProvider.STATE_NEW);
-            final NumberPlayersException numberPlayersException = new NumberPlayersException(MIN_PLAYERS, MAX_PLAYERS, numberOfPlayers);
+            final NumberPlayersException numberPlayersException = new NumberPlayersException(numberOfPlayers);
             navigation.showError(numberPlayersException);
             return false;
         }

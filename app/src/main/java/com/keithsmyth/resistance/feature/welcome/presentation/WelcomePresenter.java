@@ -17,7 +17,7 @@ public class WelcomePresenter implements Presenter<WelcomeView> {
 
     private WelcomeView welcomeView;
 
-    public WelcomePresenter(RestorePreferencesUseCase restorePreferencesUseCase, NewGameUseCase newGameUseCase, JoinGameUseCase joinGameUseCase) {
+    private WelcomePresenter(RestorePreferencesUseCase restorePreferencesUseCase, NewGameUseCase newGameUseCase, JoinGameUseCase joinGameUseCase) {
         this.restorePreferencesUseCase = restorePreferencesUseCase;
         this.newGameUseCase = newGameUseCase;
         this.joinGameUseCase = joinGameUseCase;
@@ -56,7 +56,8 @@ public class WelcomePresenter implements Presenter<WelcomeView> {
     public void newGame() {
         welcomeView.clearErrors();
         final String name = welcomeView.getNameInput();
-        if (!validateName(name)) {
+        if (isNameInvalid(name)) {
+            welcomeView.showNameError();
             return;
         }
         welcomeView.setLoadingState(true);
@@ -67,9 +68,16 @@ public class WelcomePresenter implements Presenter<WelcomeView> {
         welcomeView.clearErrors();
         final String name = welcomeView.getNameInput();
         final int gameId = parseGameId(welcomeView.getGameIdInput());
-        if (!validateName(name) | !validateGameId(gameId)) {
+
+        if (isNameInvalid(name)) {
+            welcomeView.showNameError();
             return;
         }
+        if (isGameIdInvalid(gameId)) {
+            welcomeView.showGameIdError();
+            return;
+        }
+
         welcomeView.setLoadingState(true);
         joinGameUseCase.execute(gameId, name);
     }
@@ -78,20 +86,12 @@ public class WelcomePresenter implements Presenter<WelcomeView> {
         welcomeView.setLoadingState(false);
     }
 
-    private boolean validateName(String name) {
-        final boolean isValid = !TextUtils.isEmpty(name);
-        if (!isValid) {
-            welcomeView.showNameError();
-        }
-        return isValid;
+    private boolean isNameInvalid(String name) {
+        return TextUtils.isEmpty(name);
     }
 
-    private boolean validateGameId(int gameId) {
-        final boolean isValid = gameId > 0;
-        if (!isValid) {
-            welcomeView.showGameIdError();
-        }
-        return isValid;
+    private boolean isGameIdInvalid(int gameId) {
+        return gameId < 1;
     }
 
     private int parseGameId(String input) {

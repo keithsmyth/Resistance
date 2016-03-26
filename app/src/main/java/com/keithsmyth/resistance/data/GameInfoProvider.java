@@ -48,7 +48,7 @@ public class GameInfoProvider {
     public static final int STATE_STARTED = 3;
     public static final int STATE_FINISHED = 4;
 
-    public static final int NO_GAME_ID = -1;
+    private static final int NO_GAME_ID = -1;
 
     private static final String KEY_CURRENT_GAME_ID = "game-current-game-id";
     private static final int GAME_ID_MIN = 10000;
@@ -97,17 +97,6 @@ public class GameInfoProvider {
                     });
             }
         });
-    }
-
-    public Observable<Integer> getGameState() {
-        final Firebase ref = firebaseFactory.getGameStateRef(getCurrentGameId());
-        return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<Integer>() {
-            @Override
-            public Integer map(DataSnapshot dataSnapshot) {
-                final Integer gameState = dataSnapshot.getValue(Integer.class);
-                return gameState == null ? STATE_NONE : gameState;
-            }
-        }).getObservable();
     }
 
     public Observable<Integer> watchGameState() {

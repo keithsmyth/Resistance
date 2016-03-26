@@ -2,15 +2,18 @@ package com.keithsmyth.resistance.data.model;
 
 public class GameRulesDataModel {
 
-    public final int numberOfPlayers;
     public final int totalGoodPlayers;
     public final int totalBadPlayers;
-    public final MissionRulesDataModel[] missionRulesDataModels;
 
-    public GameRulesDataModel(int numberOfPlayers, int totalGoodPlayers, int totalBadPlayers, MissionRulesDataModel[] missionRulesDataModels) {
-        this.numberOfPlayers = numberOfPlayers;
+    private final MissionRulesDataModel[] missionRulesDataModels;
+
+    public GameRulesDataModel(int totalGoodPlayers, int totalBadPlayers, MissionRulesDataModel[] missionRulesDataModels) {
         this.totalGoodPlayers = totalGoodPlayers;
         this.totalBadPlayers = totalBadPlayers;
         this.missionRulesDataModels = missionRulesDataModels;
+    }
+
+    public MissionRulesDataModel getMissionRulesDataModel(int missionNumber) {
+        return missionRulesDataModels[missionNumber - 1];
     }
 }

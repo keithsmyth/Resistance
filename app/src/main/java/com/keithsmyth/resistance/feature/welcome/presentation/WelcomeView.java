@@ -2,7 +2,7 @@ package com.keithsmyth.resistance.feature.welcome.presentation;
 
 import com.keithsmyth.resistance.navigation.ErrorView;
 
-public interface WelcomeView extends ErrorView {
+interface WelcomeView extends ErrorView {
 
     void setName(String name);
 

@@ -56,7 +56,7 @@ public class Injector {
         return firebaseFactory;
     }
 
-    public static UserProvider userProvider() {
+    private static UserProvider userProvider() {
         if (userProvider == null) {
             userProvider = new UserProvider(sharedPreferencesWrapper());
         }
@@ -77,14 +77,14 @@ public class Injector {
         return gamePlayProvider;
     }
 
-    public static CharacterProvider characterProvider() {
+    private static CharacterProvider characterProvider() {
         if (characterProvider == null) {
             characterProvider = new CharacterProvider();
         }
         return characterProvider;
     }
 
-    public static GameRulesProvider gameRulesProvider() {
+    private static GameRulesProvider gameRulesProvider() {
         if (gameRulesProvider == null) {
             gameRulesProvider = new GameRulesProvider();
         }

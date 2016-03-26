@@ -5,20 +5,19 @@ import android.content.Context;
 import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.navigation.DisplayThrowable;
 
+import static com.keithsmyth.resistance.data.GameRulesProvider.MAX_PLAYERS;
+import static com.keithsmyth.resistance.data.GameRulesProvider.MIN_PLAYERS;
+
 public class NumberPlayersException extends DisplayThrowable {
 
-    public final int minPlayers;
-    public final int maxPlayers;
-    public final int currentPlayers;
+    private final int currentPlayers;
 
-    public NumberPlayersException(int minPlayers, int maxPlayers, int currentPlayers) {
-        this.minPlayers = minPlayers;
-        this.maxPlayers = maxPlayers;
+    public NumberPlayersException(int currentPlayers) {
         this.currentPlayers = currentPlayers;
     }
 
     @Override
     public String getDisplayMessage(Context context) {
-        return context.getString(R.string.lobby_number_players_error, minPlayers, maxPlayers, currentPlayers);
+        return context.getString(R.string.lobby_number_players_error, MIN_PLAYERS, MAX_PLAYERS, currentPlayers);
     }
 }

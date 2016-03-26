@@ -5,8 +5,9 @@ import com.keithsmyth.resistance.data.UserProvider;
 
 public class RestorePreferencesUseCase {
 
-    public static final String NO_NAME = "";
     public static final int NO_GAME = -1;
+
+    private static final String NO_NAME = "";
 
     private final UserProvider userProvider;
     private final GameInfoProvider gameInfoProvider;

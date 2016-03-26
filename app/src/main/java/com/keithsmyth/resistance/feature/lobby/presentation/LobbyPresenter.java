@@ -40,7 +40,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     private LobbyView lobbyView;
     private Subscription subscription;
 
-    public LobbyPresenter(Navigation navigation, AddPlayerUseCase addPlayerUseCase, SelectCharactersUseCase selectCharactersUseCase, WatchLobbyStateUseCase watchLobbyStateUseCase, StartGameUseCase startGameUseCase, GameInfoProvider gameInfoProvider) {
+    private LobbyPresenter(Navigation navigation, AddPlayerUseCase addPlayerUseCase, SelectCharactersUseCase selectCharactersUseCase, WatchLobbyStateUseCase watchLobbyStateUseCase, StartGameUseCase startGameUseCase, GameInfoProvider gameInfoProvider) {
         this.navigation = navigation;
         this.addPlayerUseCase = addPlayerUseCase;
         this.selectCharactersUseCase = selectCharactersUseCase;

@@ -24,7 +24,7 @@ public class CharacterPresenter implements Presenter<CharacterView> {
     private Subscription playerCharactersSubscription;
     private PlayerCharacterViewModel playerCharacterViewModel;
 
-    public CharacterPresenter(Navigation navigation, DisplayCharacterUseCase displayCharacterUseCase, GameInfoProvider gameInfoProvider) {
+    private CharacterPresenter(Navigation navigation, DisplayCharacterUseCase displayCharacterUseCase, GameInfoProvider gameInfoProvider) {
         this.navigation = navigation;
         this.displayCharacterUseCase = displayCharacterUseCase;
         this.gameInfoProvider = gameInfoProvider;
@@ -54,7 +54,6 @@ public class CharacterPresenter implements Presenter<CharacterView> {
     @Override
     public void onDestroyed() {
         RxUtil.unsubscribe(playerCharactersSubscription);
-        displayCharacterUseCase.destroy();
         detachView();
     }
 
