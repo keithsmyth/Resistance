@@ -1,17 +1,19 @@
 package com.keithsmyth.resistance.feature.lobby.domain;
 
 import com.keithsmyth.resistance.RxUtil;
-import com.keithsmyth.resistance.data.provider.GameInfoProvider;
-import com.keithsmyth.resistance.data.provider.UserProvider;
 import com.keithsmyth.resistance.data.model.ModelActionWrapper;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
+import com.keithsmyth.resistance.data.provider.GameInfoProvider;
+import com.keithsmyth.resistance.data.provider.UserProvider;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
 
 import rx.Observable;
+import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class AddPlayerUseCase {
@@ -43,15 +45,21 @@ public class AddPlayerUseCase {
     private void ensurePlayerAdded() {
         RxUtil.unsubscribe(inGameSubscription);
         inGameSubscription = gameInfoProvider.isPlayerInGame(userProvider.getId())
+            .flatMap(new Func1<Boolean, Single<?>>() {
+                @Override
+                public Single<?> call(Boolean isAdded) {
+                    if (!isAdded) {
+                        return gameInfoProvider.addPlayerToGame(userProvider.getId(), userProvider.getName());
+                    }
+                    return Single.just(null);
+                }
+            })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Action1<Boolean>() {
+            .subscribe(new Action1<Object>() {
                 @Override
-                public void call(Boolean isAdded) {
+                public void call(Object o) {
                     RxUtil.unsubscribe(inGameSubscription);
-                    if (!isAdded) {
-                        addPlayerToGame();
-                    }
                 }
             }, new Action1<Throwable>() {
                 @Override
@@ -60,9 +68,5 @@ public class AddPlayerUseCase {
                     navigation.showError(new GenericDisplayThrowable(throwable));
                 }
             });
-    }
-
-    private void addPlayerToGame() {
-        gameInfoProvider.addPlayerToGame(userProvider.getId(), userProvider.getName());
     }
 }

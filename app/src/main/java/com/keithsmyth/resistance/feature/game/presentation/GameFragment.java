@@ -15,6 +15,7 @@ import com.keithsmyth.resistance.data.model.GameInfoDataModel;
 import com.keithsmyth.resistance.data.model.GamePlayDataModel;
 
 import rx.Observable;
+import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func2;
@@ -53,7 +54,7 @@ public class GameFragment extends Fragment {
         super.onResume();
         // TODO: kill this hack / move it into Presenters/UseCases etc
         RxUtil.unsubscribe(subscription);
-        final Observable<GameInfoDataModel> gameInfoObservable = Injector.gameInfoProvider().getGameInfo();
+        final Observable<GameInfoDataModel> gameInfoObservable = Injector.gameInfoProvider().getGameInfo().toObservable();
         final Observable<GamePlayDataModel> gamePlayObservable = Injector.gamePlayProvider().watchGamePlay();
         subscription = gameInfoObservable
             .zipWith(gamePlayObservable, new Func2<GameInfoDataModel, GamePlayDataModel, Void>() {

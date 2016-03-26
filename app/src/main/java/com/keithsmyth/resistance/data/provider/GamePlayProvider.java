@@ -2,6 +2,7 @@ package com.keithsmyth.resistance.data.provider;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.keithsmyth.resistance.data.firebase.FirebaseCompletionWrapper;
 import com.keithsmyth.resistance.data.firebase.FirebaseEventWrapper;
 import com.keithsmyth.resistance.data.firebase.FirebaseFactory;
 import com.keithsmyth.resistance.data.model.GamePlayDataModel;
@@ -10,6 +11,7 @@ import com.keithsmyth.resistance.data.model.GameRoundDataModel;
 import java.util.HashMap;
 
 import rx.Observable;
+import rx.Single;
 
 public class GamePlayProvider {
 
@@ -28,7 +30,7 @@ public class GamePlayProvider {
         this.userProvider = userProvider;
     }
 
-    public void createRound(String captainUserId) {
+    public Single<?> createRound(String captainUserId) {
         final GamePlayDataModel gamePlayDataModel = new GamePlayDataModel();
         gamePlayDataModel.setCurrentRound(1);
         gamePlayDataModel.setVoteFails(0);
@@ -42,7 +44,7 @@ public class GamePlayProvider {
         gamePlayDataModel.setMapRoundNumberToRound(mapRoundNumberToRound);
 
         final Firebase ref = firebaseFactory.getGamePlayRef(gameInfoProvider.getCurrentGameId());
-        ref.setValue(gamePlayDataModel);
+        return new FirebaseCompletionWrapper<>(ref, null).setValue(gamePlayDataModel);
     }
 
     public Observable<GamePlayDataModel> watchGamePlay() {

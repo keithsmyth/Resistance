@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import rx.Single;
+import rx.functions.Func1;
+
 import static com.keithsmyth.resistance.data.provider.GameRulesProvider.MAX_PLAYERS;
 import static com.keithsmyth.resistance.data.provider.GameRulesProvider.MIN_PLAYERS;
 
@@ -46,7 +49,7 @@ public class SelectCharactersUseCase {
         return characters;
     }
 
-    public boolean execute(List<CharacterViewModel> characterViewModels, List<PlayerDataModel> playerDataModels) {
+    public Single<Boolean> execute(List<CharacterViewModel> characterViewModels, List<PlayerDataModel> playerDataModels) {
         // lock down lobby
         gameInfoProvider.setGameState(GameInfoProvider.STATE_STARTING);
 
@@ -55,7 +58,7 @@ public class SelectCharactersUseCase {
         if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
             gameInfoProvider.setGameState(GameInfoProvider.STATE_NEW);
             navigation.showError(new NumberPlayersThrowable(numberOfPlayers));
-            return false;
+            return Single.just(false);
         }
 
         // verify good / bad ratio
@@ -72,7 +75,7 @@ public class SelectCharactersUseCase {
         if (badCharacters > gameRulesDataModel.totalBadPlayers || goodCharacters > gameRulesDataModel.totalGoodPlayers) {
             gameInfoProvider.setGameState(GameInfoProvider.STATE_NEW);
             navigation.showError(new NumberCharactersThrowable(gameRulesDataModel.totalGoodPlayers, goodCharacters, gameRulesDataModel.totalBadPlayers, badCharacters));
-            return false;
+            return Single.just(false);
         }
 
         // assign characters to players
@@ -95,8 +98,12 @@ public class SelectCharactersUseCase {
         }
 
         // save
-        gameInfoProvider.setAssignedCharacters(mapPlayerIdToCharacter);
-
-        return true;
+        return gameInfoProvider.setAssignedCharacters(mapPlayerIdToCharacter)
+            .map(new Func1<Object, Boolean>() {
+                @Override
+                public Boolean call(Object o) {
+                    return true;
+                }
+            });
     }
 }

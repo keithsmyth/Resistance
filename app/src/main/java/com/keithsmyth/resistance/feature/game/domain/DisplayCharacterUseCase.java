@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import rx.Observable;
+import rx.Single;
 import rx.functions.Func1;
 
 public class DisplayCharacterUseCase {
@@ -27,7 +28,7 @@ public class DisplayCharacterUseCase {
         this.characterProvider = characterProvider;
     }
 
-    public Observable<PlayerCharacterViewModel> execute() {
+    public Single<PlayerCharacterViewModel> execute() {
         return gameInfoProvider.getGameInfo()
             .map(new Func1<GameInfoDataModel, PlayerCharacterViewModel>() {
                 @Override

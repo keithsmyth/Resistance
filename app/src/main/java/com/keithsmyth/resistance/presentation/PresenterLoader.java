@@ -3,7 +3,7 @@ package com.keithsmyth.resistance.presentation;
 import android.content.Context;
 import android.support.v4.content.Loader;
 
-public class PresenterLoader<T extends Presenter> extends Loader<T> {
+class PresenterLoader<T extends Presenter> extends Loader<T> {
 
     private final PresenterFactory<T> presenterFactory;
     private T cachedItem;

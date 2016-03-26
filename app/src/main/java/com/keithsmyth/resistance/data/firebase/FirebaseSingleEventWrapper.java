@@ -5,46 +5,45 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
-import rx.Observable;
-import rx.Subscriber;
+import rx.Single;
+import rx.SingleSubscriber;
 
 public class FirebaseSingleEventWrapper<T> {
 
     private final Firebase ref;
-    private final Mapper<T> mapper;
-    private final Observable<T> observable;
+    private final Mapper<T> mapper; // TODO: 1 mapper to rule them all
+    private final Single<T> single;
 
     public FirebaseSingleEventWrapper(Firebase ref, Mapper<T> mapper) {
         this.ref = ref;
         this.mapper = mapper;
-        observable = createObservable();
+        single = createObservable();
     }
 
-    public Observable<T> getObservable() {
-        return observable;
+    public Single<T> getSingle() {
+        return single;
     }
 
-    private Observable<T> createObservable() {
-        return Observable.create(new Observable.OnSubscribe<T>() {
+    private Single<T> createObservable() {
+        return Single.create(new Single.OnSubscribe<T>() {
             @Override
-            public void call(Subscriber<? super T> subscriber) {
-                initFirebaseSingleEventListener(subscriber);
+            public void call(SingleSubscriber<? super T> singleSubscriber) {
+                initFirebaseSingleEventListener(singleSubscriber);
             }
         });
     }
 
-    private void initFirebaseSingleEventListener(final Subscriber<? super T> subscriber) {
+    private void initFirebaseSingleEventListener(final SingleSubscriber<? super T> singleSubscriber) {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final T model = mapper.map(dataSnapshot);
-                subscriber.onNext(model);
-                subscriber.onCompleted();
+                singleSubscriber.onSuccess(model);
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                subscriber.onError(firebaseError.toException());
+                singleSubscriber.onError(firebaseError.toException());
             }
         });
     }

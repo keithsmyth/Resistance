@@ -4,8 +4,8 @@ import android.support.annotation.IntDef;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.keithsmyth.resistance.data.firebase.FirebaseChildEventWrapper;
+import com.keithsmyth.resistance.data.firebase.FirebaseCompletionWrapper;
 import com.keithsmyth.resistance.data.firebase.FirebaseEventWrapper;
 import com.keithsmyth.resistance.data.firebase.FirebaseFactory;
 import com.keithsmyth.resistance.data.firebase.FirebaseSingleEventWrapper;
@@ -25,8 +25,7 @@ import java.util.Random;
 import java.util.Set;
 
 import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Action1;
+import rx.Single;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
@@ -76,27 +75,26 @@ public class GameInfoProvider {
         prefs.get().edit().remove(KEY_CURRENT_GAME_ID).apply();
     }
 
-    public Observable<Integer> createGame() {
-        // TODO: build this chain more elegantly
-        return Observable.create(new Observable.OnSubscribe<Integer>() {
-            @Override
-            public void call(final Subscriber<? super Integer> subscriber) {
-                getActiveGames()
-                    .map(new Func1<Set<Integer>, Integer>() {
-                        @Override
-                        public Integer call(Set<Integer> activeGames) {
-                            return getUniqueGameId(activeGames);
-                        }
-                    })
-                    .subscribe(new Action1<Integer>() {
-                        @Override
-                        public void call(final Integer gameId) {
-                            createGameInfoModel(gameId, subscriber);
-                            addGameToActiveGames(gameId);
-                        }
-                    });
-            }
-        });
+    public Single<Integer> createGame() {
+        return getActiveGames()
+            .map(new Func1<Set<Integer>, Integer>() {
+                @Override
+                public Integer call(Set<Integer> activeGames) {
+                    return generateUniqueGameId(activeGames);
+                }
+            })
+            .flatMap(new Func1<Integer, Single<? extends Integer>>() {
+                @Override
+                public Single<? extends Integer> call(Integer gameId) {
+                    return addGameToActiveGames(gameId);
+                }
+            })
+            .flatMap(new Func1<Integer, Single<? extends Integer>>() {
+                @Override
+                public Single<? extends Integer> call(Integer gameId) {
+                    return createGameInfoModel(gameId);
+                }
+            });
     }
 
     public Observable<Integer> watchGameState() {
@@ -110,9 +108,9 @@ public class GameInfoProvider {
         }).getObservable();
     }
 
-    public void setGameState(@GameState int gameState) {
+    public Single<?> setGameState(@GameState int gameState) {
         final Firebase ref = firebaseFactory.getGameStateRef(getCurrentGameId());
-        ref.setValue(gameState);
+        return new FirebaseCompletionWrapper<>(ref, null).setValue(gameState);
     }
 
     public Observable<ModelActionWrapper<PlayerDataModel>> watchPlayers() {
@@ -128,7 +126,7 @@ public class GameInfoProvider {
         final Observable<ModelActionWrapper<DataSnapshot>> playersObservable =
             new FirebaseChildEventWrapper<>(ref, mapper, mapper).getObservable();
 
-        return Observable.combineLatest(getOwner(), playersObservable, new Func2<String, ModelActionWrapper<DataSnapshot>, ModelActionWrapper<PlayerDataModel>>() {
+        return Observable.combineLatest(getOwner().toObservable(), playersObservable, new Func2<String, ModelActionWrapper<DataSnapshot>, ModelActionWrapper<PlayerDataModel>>() {
             @Override
             public ModelActionWrapper<PlayerDataModel> call(String ownerId, ModelActionWrapper<DataSnapshot> dataSnapshotModelActionWrapper) {
                 final DataSnapshot dataSnapshot = dataSnapshotModelActionWrapper.dataModel;
@@ -141,7 +139,7 @@ public class GameInfoProvider {
         });
     }
 
-    public Observable<List<String>> getPlayerIds() {
+    public Single<List<String>> getPlayerIds() {
         final Firebase ref = firebaseFactory.getPlayersRef(getCurrentGameId());
         return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<List<String>>() {
             @Override
@@ -152,52 +150,52 @@ public class GameInfoProvider {
                 }
                 return playerIds;
             }
-        }).getObservable();
+        }).getSingle();
     }
 
-    private Observable<String> getOwner() {
+    private Single<String> getOwner() {
         final Firebase ref = firebaseFactory.getOwnerRef(getCurrentGameId());
         return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<String>() {
             @Override
             public String map(DataSnapshot dataSnapshot) {
                 return dataSnapshot.getValue(String.class);
             }
-        }).getObservable();
+        }).getSingle();
     }
 
-    public Observable<Boolean> isPlayerInGame(String userId) {
+    public Single<Boolean> isPlayerInGame(String userId) {
         final Firebase ref = firebaseFactory.getPlayerAddedRef(getCurrentGameId(), userId);
         return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<Boolean>() {
             @Override
             public Boolean map(DataSnapshot dataSnapshot) {
                 return dataSnapshot.exists();
             }
-        }).getObservable();
+        }).getSingle();
     }
 
-    public void addPlayerToGame(String userId, String name) {
+    public Single<?> addPlayerToGame(String userId, String name) {
         final Firebase ref = firebaseFactory.getPlayersRef(getCurrentGameId());
         final Map<String, Object> newPlayerIdToNameMap = new HashMap<>(1);
         newPlayerIdToNameMap.put(userId, name);
-        ref.updateChildren(newPlayerIdToNameMap);
+        return new FirebaseCompletionWrapper<>(ref, null).updateChildren(newPlayerIdToNameMap);
     }
 
-    public void setAssignedCharacters(Map<String, Object> mapPlayerIdToCharacter) {
+    public Single<?> setAssignedCharacters(Map<String, Object> mapPlayerIdToCharacter) {
         final Firebase ref = firebaseFactory.getAssignedCharactersRef(getCurrentGameId());
-        ref.setValue(mapPlayerIdToCharacter);
+        return new FirebaseCompletionWrapper<>(ref, null).setValue(mapPlayerIdToCharacter);
     }
 
-    public Observable<GameInfoDataModel> getGameInfo() {
+    public Single<GameInfoDataModel> getGameInfo() {
         final Firebase ref  = firebaseFactory.getGameInfoRef(getCurrentGameId());
         return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<GameInfoDataModel>() {
             @Override
             public GameInfoDataModel map(DataSnapshot dataSnapshot) {
                 return dataSnapshot.getValue(GameInfoDataModel.class);
             }
-        }).getObservable();
+        }).getSingle();
     }
 
-    private Observable<Set<Integer>> getActiveGames() {
+    private Single<Set<Integer>> getActiveGames() {
         final Firebase ref = firebaseFactory.getActiveGamesRef();
         return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<Set<Integer>>() {
             @Override
@@ -208,10 +206,10 @@ public class GameInfoProvider {
                 }
                 return activeGameIdSet;
             }
-        }).getObservable();
+        }).getSingle();
     }
 
-    private int getUniqueGameId(Set<Integer> activeGames) {
+    private int generateUniqueGameId(Set<Integer> activeGames) {
         final Random rand = new Random();
         int gameId = generateGameId(rand);
         while (activeGames.contains(gameId)) {
@@ -224,29 +222,19 @@ public class GameInfoProvider {
         return rand.nextInt((GAME_ID_MAX - GAME_ID_MIN) + 1) + GAME_ID_MIN;
     }
 
-    private void createGameInfoModel(final Integer gameId, final Subscriber<? super Integer> subscriber) {
+    private Single<Integer> addGameToActiveGames(Integer gameId) {
+        final Firebase ref = firebaseFactory.getActiveGamesRef();
+        final Map<String, Object> newActiveGameIdMap = new HashMap<>(1);
+        newActiveGameIdMap.put(gameId.toString(), "");
+        return new FirebaseCompletionWrapper<>(ref, gameId).updateChildren(newActiveGameIdMap);
+    }
+
+    private Single<Integer> createGameInfoModel(Integer gameId) {
         final Firebase ref = firebaseFactory.getGameInfoRef(gameId);
         final GameInfoDataModel gameInfoDataModel = new GameInfoDataModel();
         gameInfoDataModel.setOwnerId(userProvider.getId());
         gameInfoDataModel.setStatus(STATE_NEW);
         gameInfoDataModel.setVersion(userProvider.getClientVersion());
-        ref.setValue(gameInfoDataModel, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if (firebaseError == null) {
-                    subscriber.onNext(gameId);
-                    subscriber.onCompleted();
-                } else {
-                    subscriber.onError(firebaseError.toException());
-                }
-            }
-        });
-    }
-
-    private void addGameToActiveGames(Integer gameId) {
-        final Firebase ref = firebaseFactory.getActiveGamesRef();
-        final Map<String, Object> newActiveGameIdMap = new HashMap<>(1);
-        newActiveGameIdMap.put(gameId.toString(), "");
-        ref.updateChildren(newActiveGameIdMap);
+        return new FirebaseCompletionWrapper<>(ref, gameId).setValue(gameInfoDataModel);
     }
 }

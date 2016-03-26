@@ -120,6 +120,6 @@ public class Injector {
     }
 
     public static StartGameUseCase startGameUseCase() {
-        return new StartGameUseCase(navigation(), gameInfoProvider(), gamePlayProvider());
+        return new StartGameUseCase(gameInfoProvider(), gamePlayProvider());
     }
 }
