@@ -5,8 +5,8 @@ import android.content.Context;
 import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.navigation.DisplayThrowable;
 
-import static com.keithsmyth.resistance.data.GameRulesProvider.MAX_PLAYERS;
-import static com.keithsmyth.resistance.data.GameRulesProvider.MIN_PLAYERS;
+import static com.keithsmyth.resistance.data.provider.GameRulesProvider.MAX_PLAYERS;
+import static com.keithsmyth.resistance.data.provider.GameRulesProvider.MIN_PLAYERS;
 
 public class NumberPlayersThrowable extends DisplayThrowable {
 

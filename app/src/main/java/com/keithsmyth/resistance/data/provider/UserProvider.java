@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.data;
+package com.keithsmyth.resistance.data.provider;
 
 import com.keithsmyth.resistance.BuildConfig;
 import com.keithsmyth.resistance.data.prefs.SharedPreferencesWrapper;

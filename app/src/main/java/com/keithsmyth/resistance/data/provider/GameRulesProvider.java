@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.data;
+package com.keithsmyth.resistance.data.provider;
 
 import com.keithsmyth.resistance.data.model.GameRulesDataModel;
 import com.keithsmyth.resistance.data.model.MissionRulesDataModel;

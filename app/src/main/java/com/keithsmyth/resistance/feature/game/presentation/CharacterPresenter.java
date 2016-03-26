@@ -4,7 +4,7 @@ import com.keithsmyth.resistance.Injector;
 import com.keithsmyth.resistance.presentation.Presenter;
 import com.keithsmyth.resistance.presentation.PresenterFactory;
 import com.keithsmyth.resistance.RxUtil;
-import com.keithsmyth.resistance.data.GameInfoProvider;
+import com.keithsmyth.resistance.data.provider.GameInfoProvider;
 import com.keithsmyth.resistance.feature.game.domain.DisplayCharacterUseCase;
 import com.keithsmyth.resistance.feature.game.model.PlayerCharacterViewModel;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;

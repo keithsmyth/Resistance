@@ -1,8 +1,8 @@
 package com.keithsmyth.resistance.feature.welcome.domain;
 
 import com.keithsmyth.resistance.RxUtil;
-import com.keithsmyth.resistance.data.GameInfoProvider;
-import com.keithsmyth.resistance.data.UserProvider;
+import com.keithsmyth.resistance.data.provider.GameInfoProvider;
+import com.keithsmyth.resistance.data.provider.UserProvider;
 import com.keithsmyth.resistance.data.model.GameInfoDataModel;
 import com.keithsmyth.resistance.feature.welcome.exception.GameNotExistThrowable;
 import com.keithsmyth.resistance.feature.welcome.exception.InvalidGameVersionThrowable;

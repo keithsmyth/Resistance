@@ -1,8 +1,8 @@
 package com.keithsmyth.resistance.feature.lobby.domain;
 
-import com.keithsmyth.resistance.data.CharacterProvider;
-import com.keithsmyth.resistance.data.GameInfoProvider;
-import com.keithsmyth.resistance.data.GameRulesProvider;
+import com.keithsmyth.resistance.data.provider.CharacterProvider;
+import com.keithsmyth.resistance.data.provider.GameInfoProvider;
+import com.keithsmyth.resistance.data.provider.GameRulesProvider;
 import com.keithsmyth.resistance.data.model.CharacterDataModel;
 import com.keithsmyth.resistance.data.model.GameRulesDataModel;
 import com.keithsmyth.resistance.data.model.PlayerDataModel;
@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static com.keithsmyth.resistance.data.GameRulesProvider.MAX_PLAYERS;
-import static com.keithsmyth.resistance.data.GameRulesProvider.MIN_PLAYERS;
+import static com.keithsmyth.resistance.data.provider.GameRulesProvider.MAX_PLAYERS;
+import static com.keithsmyth.resistance.data.provider.GameRulesProvider.MIN_PLAYERS;
 
 public class SelectCharactersUseCase {
 

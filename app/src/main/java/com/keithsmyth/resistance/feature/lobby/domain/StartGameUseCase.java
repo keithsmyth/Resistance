@@ -1,8 +1,8 @@
 package com.keithsmyth.resistance.feature.lobby.domain;
 
 import com.keithsmyth.resistance.RxUtil;
-import com.keithsmyth.resistance.data.GameInfoProvider;
-import com.keithsmyth.resistance.data.GamePlayProvider;
+import com.keithsmyth.resistance.data.provider.GameInfoProvider;
+import com.keithsmyth.resistance.data.provider.GamePlayProvider;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
 

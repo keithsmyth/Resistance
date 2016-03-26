@@ -1,4 +1,4 @@
-package com.keithsmyth.resistance.data;
+package com.keithsmyth.resistance.data.provider;
 
 import android.support.annotation.IntDef;
 

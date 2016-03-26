@@ -2,11 +2,11 @@ package com.keithsmyth.resistance;
 
 import android.app.Application;
 
-import com.keithsmyth.resistance.data.CharacterProvider;
-import com.keithsmyth.resistance.data.GameInfoProvider;
-import com.keithsmyth.resistance.data.GamePlayProvider;
-import com.keithsmyth.resistance.data.GameRulesProvider;
-import com.keithsmyth.resistance.data.UserProvider;
+import com.keithsmyth.resistance.data.provider.CharacterProvider;
+import com.keithsmyth.resistance.data.provider.GameInfoProvider;
+import com.keithsmyth.resistance.data.provider.GamePlayProvider;
+import com.keithsmyth.resistance.data.provider.GameRulesProvider;
+import com.keithsmyth.resistance.data.provider.UserProvider;
 import com.keithsmyth.resistance.data.firebase.FirebaseFactory;
 import com.keithsmyth.resistance.data.prefs.SharedPreferencesWrapper;
 import com.keithsmyth.resistance.feature.game.domain.DisplayCharacterUseCase;
