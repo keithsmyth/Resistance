@@ -3,18 +3,18 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/listPreferredItemHeight"
-                android:paddingStart="@dimen/margin_medium"
-                android:paddingEnd="@dimen/margin_medium">
+                android:paddingStart="@dimen/padding_medium"
+                android:paddingEnd="@dimen/padding_medium">
 
     <CheckBox
         android:id="@+id/selected_check_box"
-        android:layout_width="@dimen/margin_content"
+        android:layout_width="@dimen/padding_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"/>
 
     <TextView
         android:id="@+id/name_text"
-        style="@style/Base.TextAppearance.AppCompat.Body1"
+        style="@style/Base.TextAppearance.AppCompat.Subhead"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toEndOf="@id/selected_check_box"
