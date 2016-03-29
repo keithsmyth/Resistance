@@ -6,6 +6,7 @@ import com.keithsmyth.resistance.data.provider.UserProvider;
 import com.keithsmyth.resistance.data.model.GameInfoDataModel;
 import com.keithsmyth.resistance.feature.welcome.exception.GameNotExistThrowable;
 import com.keithsmyth.resistance.feature.welcome.exception.InvalidGameVersionThrowable;
+import com.keithsmyth.resistance.feature.welcome.exception.NameExistsThrowable;
 import com.keithsmyth.resistance.feature.welcome.exception.NotYourGameThrowable;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
@@ -71,13 +72,19 @@ public class JoinGameUseCase {
                 navigation.showError(new GameNotExistThrowable());
                 break;
             case GameInfoProvider.STATE_NEW:
-                navigation.openLobby();
+                if (nameExistsForOtherPlayer(gameInfoDataModel)) {
+                    navigation.showError(new NameExistsThrowable());
+                } else {
+                    navigation.openLobby();
+                }
                 break;
             case GameInfoProvider.STATE_STARTING:
-                if (isPlayerInGame(gameInfoDataModel)) {
-                    navigation.openLobby();
-                } else {
+                if (nameExistsForOtherPlayer(gameInfoDataModel)) {
+                    navigation.showError(new NameExistsThrowable());
+                } else if (!isPlayerInGame(gameInfoDataModel)) {
                     navigation.showError(new NotYourGameThrowable());
+                } else {
+                    navigation.openLobby();
                 }
                 break;
             case GameInfoProvider.STATE_STARTED:
@@ -99,5 +106,17 @@ public class JoinGameUseCase {
 
     private boolean isPlayerInGame(GameInfoDataModel gameInfoDataModel) {
         return gameInfoDataModel.getMapPlayerIdToName().containsKey(userProvider.getId());
+    }
+
+    private boolean nameExistsForOtherPlayer(GameInfoDataModel gameInfoDataModel) {
+        if (!isPlayerInGame(gameInfoDataModel)) {
+            final String name = userProvider.getName();
+            for (String otherName : gameInfoDataModel.getMapPlayerIdToName().values()) {
+                if (otherName.equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
