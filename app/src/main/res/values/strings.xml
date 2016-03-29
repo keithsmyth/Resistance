@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Companion for Resistance - Avalon</string>
+    <string name="app_name">Companion for Resistance: Avalon</string>
 
     <string name="unexpected_error">Unexpected error</string>
 
     <string name="welcome_title">Welcome</string>
-    <string name="welcome_resume">Resume</string>
+    <string name="welcome_resume">Join</string>
     <string name="welcome_name">Name</string>
     <string name="welcome_name_error">Required field</string>
     <string name="welcome_new_game">New Game</string>
