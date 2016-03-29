@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import rx.Observable;
 import rx.Single;
 import rx.functions.Func1;
 
@@ -66,6 +65,9 @@ public class DisplayCharacterUseCase {
             characterViewModels.add(new CharacterViewModel(characterName, characterProvider.getCharacter(characterName).isBad));
         }
 
-        return new PlayerCharacterViewModel(name, userCharacter.name, userCharacter.isBad, revealedNames, userCharacter.revealedDescription(), characterViewModels);
+        final List<String> players = new ArrayList<>(gameInfoDataModel.getMapPlayerIdToName().values());
+        Collections.sort(players);
+
+        return new PlayerCharacterViewModel(name, userCharacter.name, userCharacter.isBad, revealedNames, userCharacter.revealedDescription(), characterViewModels, players);
     }
 }

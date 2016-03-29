@@ -12,13 +12,15 @@ public class PlayerCharacterViewModel {
     public final List<String> revealedNames;
     public final String revealedDescription;
     public final List<CharacterViewModel> characterViewModels;
+    public final List<String> players;
 
-    public PlayerCharacterViewModel(String name, String characterName, boolean isBad, List<String> revealedNames, String revealedDescription, List<CharacterViewModel> characterViewModels) {
+    public PlayerCharacterViewModel(String name, String characterName, boolean isBad, List<String> revealedNames, String revealedDescription, List<CharacterViewModel> characterViewModels, List<String> players) {
         this.name = name;
         this.characterName = characterName;
         this.isBad = isBad;
         this.revealedNames = revealedNames;
         this.revealedDescription = revealedDescription;
         this.characterViewModels = characterViewModels;
+        this.players = players;
     }
 }

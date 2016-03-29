@@ -71,7 +71,8 @@ public class CharacterFragment extends Fragment implements CharacterView {
             getString(playerCharacterViewModel.isBad ? R.string.bad : R.string.good),
             playerCharacterViewModel.revealedDescription,
             join(playerCharacterViewModel.revealedNames),
-            buildCharactersInfo(playerCharacterViewModel.characterViewModels)));
+            buildCharactersInfo(playerCharacterViewModel.characterViewModels),
+            join(playerCharacterViewModel.players)));
     }
 
     private String buildCharactersInfo(List<CharacterViewModel> characterViewModels) {
