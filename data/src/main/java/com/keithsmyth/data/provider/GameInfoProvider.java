@@ -182,6 +182,16 @@ public class GameInfoProvider {
         return new FirebaseCompletionWrapper<>(ref, null).setValue(mapPlayerIdToCharacter);
     }
 
+    public Observable<GameInfoDataModel> watchGameInfo() {
+        final Firebase ref  = firebaseFactory.getGameInfoRef(getCurrentGameId());
+        return new FirebaseEventWrapper<>(ref, new FirebaseEventWrapper.Mapper<GameInfoDataModel>() {
+            @Override
+            public GameInfoDataModel map(DataSnapshot dataSnapshot) {
+                return dataSnapshot.getValue(GameInfoDataModel.class);
+            }
+        }).getObservable();
+    }
+
     public Single<GameInfoDataModel> getGameInfo() {
         final Firebase ref  = firebaseFactory.getGameInfoRef(getCurrentGameId());
         return new FirebaseSingleEventWrapper<>(ref, new FirebaseSingleEventWrapper.Mapper<GameInfoDataModel>() {
@@ -190,6 +200,17 @@ public class GameInfoProvider {
                 return dataSnapshot.getValue(GameInfoDataModel.class);
             }
         }).getSingle();
+    }
+
+    public Observable<ModelActionWrapper<Integer>> watchActiveGames() {
+        final Firebase ref = firebaseFactory.getActiveGamesRef();
+        final FirebaseChildEventWrapper.Mapper<Integer> mapper = new FirebaseChildEventWrapper.Mapper<Integer>() {
+            @Override
+            public Integer map(DataSnapshot dataSnapshot) {
+                return Integer.parseInt(dataSnapshot.getKey());
+            }
+        };
+        return new FirebaseChildEventWrapper<>(ref, mapper, mapper).getObservable();
     }
 
     private Single<Set<Integer>> getActiveGames() {

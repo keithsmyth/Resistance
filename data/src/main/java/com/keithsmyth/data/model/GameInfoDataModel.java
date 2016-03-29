@@ -1,5 +1,7 @@
 package com.keithsmyth.data.model;
 
+import com.keithsmyth.data.provider.GameInfoProvider;
+
 import java.util.Map;
 
 @SuppressWarnings({"SameParameterValue", "unused"})
@@ -28,6 +30,7 @@ public class GameInfoDataModel {
         this.ownerId = ownerId;
     }
 
+    @GameInfoProvider.GameState
     public int getStatus() {
         return status;
     }

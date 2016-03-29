@@ -8,6 +8,7 @@ public class FirebaseFactory {
     private static final String FIREBASE_URL = BuildConfig.UNIQUE_FIREBASE_ROOT_URL;
 
     private static final String ACTIVE_GAMES_PATH = "/activeGames";
+    private static final String GAME_PATH = "/games/%s";
     private static final String GAME_INFO_PATH = "/games/%s/info";
     private static final String GAME_STATE_PATH = "/games/%s/info/status";
     private static final String GAME_PLAYERS_PATH = "/games/%s/info/mapPlayerIdToName";
@@ -18,6 +19,10 @@ public class FirebaseFactory {
 
     public Firebase getActiveGamesRef() {
         return new Firebase(FIREBASE_URL + ACTIVE_GAMES_PATH);
+    }
+
+    public Firebase getGameRef(int gameId) {
+        return new Firebase(FIREBASE_URL + String.format(GAME_PATH, gameId));
     }
 
     public Firebase getGameInfoRef(int gameId) {
