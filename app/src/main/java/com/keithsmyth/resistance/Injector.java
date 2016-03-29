@@ -2,13 +2,13 @@ package com.keithsmyth.resistance;
 
 import android.app.Application;
 
-import com.keithsmyth.resistance.data.provider.CharacterProvider;
-import com.keithsmyth.resistance.data.provider.GameInfoProvider;
-import com.keithsmyth.resistance.data.provider.GamePlayProvider;
-import com.keithsmyth.resistance.data.provider.GameRulesProvider;
-import com.keithsmyth.resistance.data.provider.UserProvider;
-import com.keithsmyth.resistance.data.firebase.FirebaseFactory;
-import com.keithsmyth.resistance.data.prefs.SharedPreferencesWrapper;
+import com.keithsmyth.data.provider.CharacterProvider;
+import com.keithsmyth.data.provider.GameInfoProvider;
+import com.keithsmyth.data.provider.GamePlayProvider;
+import com.keithsmyth.data.provider.GameRulesProvider;
+import com.keithsmyth.data.provider.UserProvider;
+import com.keithsmyth.data.firebase.FirebaseFactory;
+import com.keithsmyth.data.prefs.SharedPreferencesWrapper;
 import com.keithsmyth.resistance.feature.game.domain.DisplayCharacterUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.SelectCharactersUseCase;

@@ -2,9 +2,9 @@ package com.keithsmyth.resistance.feature.lobby.presentation;
 
 import com.keithsmyth.resistance.Injector;
 import com.keithsmyth.resistance.RxUtil;
-import com.keithsmyth.resistance.data.model.ModelActionWrapper;
-import com.keithsmyth.resistance.data.model.PlayerDataModel;
-import com.keithsmyth.resistance.data.provider.GameInfoProvider;
+import com.keithsmyth.data.model.ModelActionWrapper;
+import com.keithsmyth.data.model.PlayerDataModel;
+import com.keithsmyth.data.provider.GameInfoProvider;
 import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.SelectCharactersUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.StartGameUseCase;

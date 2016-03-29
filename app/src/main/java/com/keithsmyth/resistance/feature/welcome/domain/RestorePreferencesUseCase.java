@@ -1,7 +1,7 @@
 package com.keithsmyth.resistance.feature.welcome.domain;
 
-import com.keithsmyth.resistance.data.provider.GameInfoProvider;
-import com.keithsmyth.resistance.data.provider.UserProvider;
+import com.keithsmyth.data.provider.GameInfoProvider;
+import com.keithsmyth.data.provider.UserProvider;
 
 public class RestorePreferencesUseCase {
 

@@ -1,6 +1,6 @@
 package com.keithsmyth.resistance.feature.lobby.presentation;
 
-import com.keithsmyth.resistance.data.model.PlayerDataModel;
+import com.keithsmyth.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 
 import java.util.List;

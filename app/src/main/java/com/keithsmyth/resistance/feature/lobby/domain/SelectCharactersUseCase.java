@@ -1,11 +1,11 @@
 package com.keithsmyth.resistance.feature.lobby.domain;
 
-import com.keithsmyth.resistance.data.provider.CharacterProvider;
-import com.keithsmyth.resistance.data.provider.GameInfoProvider;
-import com.keithsmyth.resistance.data.provider.GameRulesProvider;
-import com.keithsmyth.resistance.data.model.CharacterDataModel;
-import com.keithsmyth.resistance.data.model.GameRulesDataModel;
-import com.keithsmyth.resistance.data.model.PlayerDataModel;
+import com.keithsmyth.data.provider.CharacterProvider;
+import com.keithsmyth.data.provider.GameInfoProvider;
+import com.keithsmyth.data.provider.GameRulesProvider;
+import com.keithsmyth.data.model.CharacterDataModel;
+import com.keithsmyth.data.model.GameRulesDataModel;
+import com.keithsmyth.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.exception.NumberCharactersThrowable;
 import com.keithsmyth.resistance.feature.lobby.exception.NumberPlayersThrowable;
 import com.keithsmyth.resistance.feature.lobby.mapper.CharacterMapper;
@@ -21,8 +21,8 @@ import java.util.Random;
 import rx.Single;
 import rx.functions.Func1;
 
-import static com.keithsmyth.resistance.data.provider.GameRulesProvider.MAX_PLAYERS;
-import static com.keithsmyth.resistance.data.provider.GameRulesProvider.MIN_PLAYERS;
+import static com.keithsmyth.data.provider.GameRulesProvider.MAX_PLAYERS;
+import static com.keithsmyth.data.provider.GameRulesProvider.MIN_PLAYERS;
 
 public class SelectCharactersUseCase {
 

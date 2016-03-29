@@ -1,10 +1,10 @@
 package com.keithsmyth.resistance.feature.game.domain;
 
-import com.keithsmyth.resistance.data.provider.CharacterProvider;
-import com.keithsmyth.resistance.data.provider.GameInfoProvider;
-import com.keithsmyth.resistance.data.provider.UserProvider;
-import com.keithsmyth.resistance.data.model.GameInfoDataModel;
-import com.keithsmyth.resistance.data.model.CharacterDataModel;
+import com.keithsmyth.data.provider.CharacterProvider;
+import com.keithsmyth.data.provider.GameInfoProvider;
+import com.keithsmyth.data.provider.UserProvider;
+import com.keithsmyth.data.model.GameInfoDataModel;
+import com.keithsmyth.data.model.CharacterDataModel;
 import com.keithsmyth.resistance.feature.game.model.PlayerCharacterViewModel;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 

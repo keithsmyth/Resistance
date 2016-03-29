@@ -11,11 +11,10 @@ import android.widget.TextView;
 import com.keithsmyth.resistance.Injector;
 import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.RxUtil;
-import com.keithsmyth.resistance.data.model.GameInfoDataModel;
-import com.keithsmyth.resistance.data.model.GamePlayDataModel;
+import com.keithsmyth.data.model.GameInfoDataModel;
+import com.keithsmyth.data.model.GamePlayDataModel;
 
 import rx.Observable;
-import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func2;

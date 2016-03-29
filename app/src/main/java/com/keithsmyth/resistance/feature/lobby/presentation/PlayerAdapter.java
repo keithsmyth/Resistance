@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.keithsmyth.resistance.R;
-import com.keithsmyth.resistance.data.model.PlayerDataModel;
+import com.keithsmyth.data.model.PlayerDataModel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,7 @@
 package com.keithsmyth.resistance.feature.lobby.domain;
 
-import com.keithsmyth.resistance.data.provider.GameInfoProvider;
-import com.keithsmyth.resistance.data.provider.GamePlayProvider;
-import com.keithsmyth.resistance.navigation.Navigation;
+import com.keithsmyth.data.provider.GameInfoProvider;
+import com.keithsmyth.data.provider.GamePlayProvider;
 
 import java.util.List;
 import java.util.Random;

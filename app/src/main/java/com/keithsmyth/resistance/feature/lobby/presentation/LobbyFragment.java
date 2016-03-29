@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.keithsmyth.resistance.R;
-import com.keithsmyth.resistance.data.model.PlayerDataModel;
+import com.keithsmyth.data.model.PlayerDataModel;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 import com.keithsmyth.resistance.presentation.PresenterDelegate;
 
