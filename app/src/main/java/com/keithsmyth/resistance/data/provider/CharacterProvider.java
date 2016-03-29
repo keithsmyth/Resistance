@@ -81,7 +81,7 @@ public class CharacterProvider {
         }
     };
 
-    private static final CharacterDataModel SERVANT = new CharacterDataModel("Loyal servant of Arthur", false) {
+    private static final CharacterDataModel SERVANT = new CharacterDataModel("Servant", false) {
         @Override
         public boolean isRevealed(CharacterDataModel characterDataModel) {
             return false;
@@ -93,7 +93,7 @@ public class CharacterProvider {
         }
     };
 
-    private static final CharacterDataModel MINION = new CharacterDataModel("Minion of Mordred", true) {
+    private static final CharacterDataModel MINION = new CharacterDataModel("Minion", true) {
         @Override
         public boolean isRevealed(CharacterDataModel characterDataModel) {
             return characterDataModel.isBad && characterDataModel != OBERON;

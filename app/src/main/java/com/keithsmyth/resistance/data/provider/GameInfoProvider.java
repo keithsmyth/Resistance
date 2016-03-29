@@ -31,9 +31,6 @@ import rx.functions.Func2;
 
 // TODO: Ensure a single GameInfoDataModel is cached when current game id is set.
 // TODO: Ensure it can be turned off - e.g. setActive(boolean)
-// TODO: get and watch calls should be marked accordingly
-// TODO: always return Observable watching sets, and ensure we're using them correctly
-// TODO: Use Rx Single for Observables with 1 response
 public class GameInfoProvider {
 
     @Retention(RetentionPolicy.SOURCE)

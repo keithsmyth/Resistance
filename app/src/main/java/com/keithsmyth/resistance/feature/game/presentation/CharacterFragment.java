@@ -10,8 +10,10 @@ import android.widget.TextView;
 
 import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.feature.game.model.PlayerCharacterViewModel;
+import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 import com.keithsmyth.resistance.presentation.PresenterDelegate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CharacterFragment extends Fragment implements CharacterView {
@@ -69,12 +71,29 @@ public class CharacterFragment extends Fragment implements CharacterView {
             getString(playerCharacterViewModel.isBad ? R.string.bad : R.string.good),
             playerCharacterViewModel.revealedDescription,
             join(playerCharacterViewModel.revealedNames),
-            join(playerCharacterViewModel.characters)));
+            buildCharactersInfo(playerCharacterViewModel.characterViewModels)));
+    }
+
+    private String buildCharactersInfo(List<CharacterViewModel> characterViewModels) {
+        final List<String> good = new ArrayList<>();
+        final List<String> bad = new ArrayList<>();
+        for (CharacterViewModel characterViewModel : characterViewModels) {
+            if (characterViewModel.isBad) {
+                bad.add(characterViewModel.name);
+            } else {
+                good.add(characterViewModel.name);
+            }
+        }
+        return getString(R.string.game_character_team_arthur, good.size()) + "\n" +
+            join(good) + "\n" +
+            getString(R.string.game_character_team_mordred, bad.size()) + "\n" +
+            join(bad);
     }
 
     private String join(List<String> list) {
         final StringBuilder builder = new StringBuilder();
         for (String item : list) {
+            builder.append("• ");
             builder.append(item);
             builder.append("\n");
         }

@@ -22,6 +22,8 @@
 
     <string name="game_title">Game</string>
     <string name="game_character_info">%1$s\nYou are %2$s (%3$s)\n%4$s\n%5$s\nCharacters are\n%6$s</string>
+    <string name="game_character_team_arthur">Team Arthur (good: %s players)</string>
+    <string name="game_character_team_mordred">Team Mordred (bad: %s players)</string>
     <string name="game_info_title">Info</string>
     <string name="game_id">Game # %s</string>
 
