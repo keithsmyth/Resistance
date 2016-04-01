@@ -5,6 +5,7 @@ import com.keithsmyth.data.provider.GameInfoProvider;
 import com.keithsmyth.data.provider.UserProvider;
 import com.keithsmyth.data.model.GameInfoDataModel;
 import com.keithsmyth.data.model.CharacterDataModel;
+import com.keithsmyth.resistance.DateUtil;
 import com.keithsmyth.resistance.feature.game.model.PlayerCharacterViewModel;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 
@@ -62,7 +63,8 @@ public class DisplayCharacterUseCase {
         Collections.sort(characters);
         final List<CharacterViewModel> characterViewModels = new ArrayList<>(characters.size());
         for (String characterName : characters) {
-            characterViewModels.add(new CharacterViewModel(characterName, characterProvider.getCharacter(characterName).isBad));
+            final String givenName = DateUtil.isAprilFools() ? "?" : characterName;
+            characterViewModels.add(new CharacterViewModel(givenName, characterProvider.getCharacter(characterName).isBad));
         }
 
         final List<String> players = new ArrayList<>(gameInfoDataModel.getMapPlayerIdToName().values());

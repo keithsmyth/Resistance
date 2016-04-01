@@ -8,6 +8,7 @@ import com.keithsmyth.data.model.PlayerDataModel;
 import com.keithsmyth.data.provider.CharacterProvider;
 import com.keithsmyth.data.provider.GameInfoProvider;
 import com.keithsmyth.data.provider.GameRulesProvider;
+import com.keithsmyth.resistance.DateUtil;
 import com.keithsmyth.resistance.feature.lobby.exception.NumberCharactersThrowable;
 import com.keithsmyth.resistance.feature.lobby.exception.NumberPlayersThrowable;
 import com.keithsmyth.resistance.feature.lobby.mapper.CharacterMapper;
@@ -82,13 +83,9 @@ public class SelectCharactersUseCase {
         }
 
         // assign characters to players
-        final Map<String, Object> mapPlayerIdToCharacter;
-        Calendar c = Calendar.getInstance();
-        if (c.get(Calendar.MONTH) == Calendar.APRIL && c.get(Calendar.DAY_OF_MONTH) == 1) {
-            mapPlayerIdToCharacter = assignCharactersAprilFools(playerDataModels);
-        } else {
-            mapPlayerIdToCharacter = assignCharacters(characterViewModels, playerDataModels, goodCharacters, badCharacters, gameRulesDataModel);
-        }
+        final Map<String, Object> mapPlayerIdToCharacter = DateUtil.isAprilFools()
+            ? assignCharactersAprilFools(playerDataModels)
+            : assignCharacters(characterViewModels, playerDataModels, goodCharacters, badCharacters, gameRulesDataModel);
 
         // save
         return gameInfoProvider.setAssignedCharacters(mapPlayerIdToCharacter)
