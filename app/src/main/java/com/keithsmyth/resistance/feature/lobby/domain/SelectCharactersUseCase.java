@@ -1,11 +1,13 @@
 package com.keithsmyth.resistance.feature.lobby.domain;
 
-import com.keithsmyth.data.provider.CharacterProvider;
-import com.keithsmyth.data.provider.GameInfoProvider;
-import com.keithsmyth.data.provider.GameRulesProvider;
+import android.support.annotation.NonNull;
+
 import com.keithsmyth.data.model.CharacterDataModel;
 import com.keithsmyth.data.model.GameRulesDataModel;
 import com.keithsmyth.data.model.PlayerDataModel;
+import com.keithsmyth.data.provider.CharacterProvider;
+import com.keithsmyth.data.provider.GameInfoProvider;
+import com.keithsmyth.data.provider.GameRulesProvider;
 import com.keithsmyth.resistance.feature.lobby.exception.NumberCharactersThrowable;
 import com.keithsmyth.resistance.feature.lobby.exception.NumberPlayersThrowable;
 import com.keithsmyth.resistance.feature.lobby.mapper.CharacterMapper;
@@ -13,6 +15,7 @@ import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 import com.keithsmyth.resistance.navigation.Navigation;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +82,26 @@ public class SelectCharactersUseCase {
         }
 
         // assign characters to players
+        final Map<String, Object> mapPlayerIdToCharacter;
+        Calendar c = Calendar.getInstance();
+        if (c.get(Calendar.MONTH) == Calendar.APRIL && c.get(Calendar.DAY_OF_MONTH) == 1) {
+            mapPlayerIdToCharacter = assignCharactersAprilFools(playerDataModels);
+        } else {
+            mapPlayerIdToCharacter = assignCharacters(characterViewModels, playerDataModels, goodCharacters, badCharacters, gameRulesDataModel);
+        }
+
+        // save
+        return gameInfoProvider.setAssignedCharacters(mapPlayerIdToCharacter)
+            .map(new Func1<Object, Boolean>() {
+                @Override
+                public Boolean call(Object o) {
+                    return true;
+                }
+            });
+    }
+
+    @NonNull
+    private Map<String, Object> assignCharacters(List<CharacterViewModel> characterViewModels, List<PlayerDataModel> playerDataModels, int goodCharacters, int badCharacters, GameRulesDataModel gameRulesDataModel) {
         final List<String> unassignedCharacters = new ArrayList<>(playerDataModels.size());
         for (CharacterViewModel characterViewModel : characterViewModels) {
             unassignedCharacters.add(characterViewModel.name);
@@ -96,14 +119,21 @@ public class SelectCharactersUseCase {
             mapPlayerIdToCharacter.put(playerDataModel.id, unassignedCharacters.get(index));
             unassignedCharacters.remove(index);
         }
+        return mapPlayerIdToCharacter;
+    }
 
-        // save
-        return gameInfoProvider.setAssignedCharacters(mapPlayerIdToCharacter)
-            .map(new Func1<Object, Boolean>() {
-                @Override
-                public Boolean call(Object o) {
-                    return true;
-                }
-            });
+    private Map<String, Object> assignCharactersAprilFools(List<PlayerDataModel> playerDataModels) {
+        final List<String> unassignedCharacters = new ArrayList<>(playerDataModels.size());
+        for (int i = 0; i < playerDataModels.size(); i++) {
+            unassignedCharacters.add(i % 2 == 0 ? "Servant" : "Oberon");
+        }
+        final Random rand = new Random();
+        final Map<String, Object> mapPlayerIdToCharacter = new HashMap<>(playerDataModels.size());
+        for (PlayerDataModel playerDataModel : playerDataModels) {
+            final int index = rand.nextInt(unassignedCharacters.size());
+            mapPlayerIdToCharacter.put(playerDataModel.id, unassignedCharacters.get(index));
+            unassignedCharacters.remove(index);
+        }
+        return mapPlayerIdToCharacter;
     }
 }
