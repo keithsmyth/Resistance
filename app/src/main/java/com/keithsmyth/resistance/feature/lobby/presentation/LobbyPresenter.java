@@ -1,14 +1,15 @@
 package com.keithsmyth.resistance.feature.lobby.presentation;
 
-import com.keithsmyth.resistance.Injector;
-import com.keithsmyth.resistance.RxUtil;
 import com.keithsmyth.data.model.ModelActionWrapper;
 import com.keithsmyth.data.model.PlayerDataModel;
 import com.keithsmyth.data.provider.GameInfoProvider;
+import com.keithsmyth.resistance.Injector;
+import com.keithsmyth.resistance.RxUtil;
 import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.SelectCharactersUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.StartGameUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.WatchLobbyStateUseCase;
+import com.keithsmyth.resistance.feature.lobby.exception.NoSuicideThrowable;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 import com.keithsmyth.resistance.navigation.GenericDisplayThrowable;
 import com.keithsmyth.resistance.navigation.Navigation;
@@ -16,6 +17,7 @@ import com.keithsmyth.resistance.presentation.Presenter;
 import com.keithsmyth.resistance.presentation.PresenterFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +44,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
 
     private LobbyView lobbyView;
     private Subscription addPlayerSubscription;
+    private Subscription removePlayerSubscription;
     private Subscription startGameSubscription;
 
     private LobbyPresenter(Navigation navigation, AddPlayerUseCase addPlayerUseCase, SelectCharactersUseCase selectCharactersUseCase, WatchLobbyStateUseCase watchLobbyStateUseCase, StartGameUseCase startGameUseCase, GameInfoProvider gameInfoProvider) {
@@ -86,6 +89,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
             lobbyView.setPlayers(playerDataModels);
             if (!characterViewModels.isEmpty()) {
                 lobbyView.showCharacters(characterViewModels);
+                lobbyView.allowPlayerAdmin();
             }
         }
 
@@ -104,6 +108,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
     public void onDestroyed() {
         detachView();
         RxUtil.unsubscribe(addPlayerSubscription);
+        RxUtil.unsubscribe(removePlayerSubscription);
         addPlayerUseCase.destroy();
     }
 
@@ -145,6 +150,36 @@ public class LobbyPresenter implements Presenter<LobbyView> {
             });
     }
 
+    public void changePlayerOrder(int from, int to) {
+        Collections.swap(playerDataModels, from, to);
+    }
+
+    public void removePlayer(int position) {
+        final PlayerDataModel removeTarget = playerDataModels.get(position);
+        if (removeTarget.isMe) {
+            navigation.showError(new NoSuicideThrowable());
+            if (lobbyView != null) {
+                lobbyView.setPlayers(playerDataModels);
+            }
+            return;
+        }
+        removePlayerSubscription = gameInfoProvider.removePlayerToGame(removeTarget.id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Action1<Object>() {
+                @Override
+                public void call(Object o) {
+                    RxUtil.unsubscribe(addPlayerSubscription);
+                }
+            }, new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+                    RxUtil.unsubscribe(addPlayerSubscription);
+                    navigation.showError(new GenericDisplayThrowable(throwable));
+                }
+            });
+    }
+
     private void onPlayerAdded(PlayerDataModel playerDataModel) {
         playerDataModels.add(playerDataModel);
         if (lobbyView != null) {
@@ -155,6 +190,7 @@ public class LobbyPresenter implements Presenter<LobbyView> {
             characterViewModels.addAll(selectCharactersUseCase.getCharacters());
             if (lobbyView != null) {
                 lobbyView.showCharacters(characterViewModels);
+                lobbyView.allowPlayerAdmin();
             }
         }
     }

@@ -16,7 +16,6 @@ import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
 import com.keithsmyth.resistance.navigation.Navigation;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,8 +86,20 @@ public class SelectCharactersUseCase {
             ? assignCharactersAprilFools(playerDataModels)
             : assignCharacters(characterViewModels, playerDataModels, goodCharacters, badCharacters, gameRulesDataModel);
 
+        // save character order
+        final Map<String, Object> mapPlayerIdToOrder = new HashMap<>(playerDataModels.size());
+        for (int i = 0; i < playerDataModels.size(); i++) {
+            mapPlayerIdToOrder.put(playerDataModels.get(i).id, i);
+        }
+
         // save
         return gameInfoProvider.setAssignedCharacters(mapPlayerIdToCharacter)
+            .flatMap(new Func1<Object, Single<?>>() {
+                @Override
+                public Single<?> call(Object o) {
+                    return gameInfoProvider.setPlayerOrder(mapPlayerIdToOrder);
+                }
+            })
             .map(new Func1<Object, Boolean>() {
                 @Override
                 public Boolean call(Object o) {

@@ -20,6 +20,7 @@
     <string name="lobby_number_players_error">Must be between %1$s and %2$s players (is %3$s)</string>
     <string name="lobby_number_characters_error">Must have max %1$s good (is %2$s) and max %3$s bad (is %4$s)</string>
     <string name="lobby_invalid_status_error">Something went wrong</string>
+    <string name="lobby_no_suicide_error">That would be committing game suicide</string>
 
     <string name="game_title">Game</string>
     <string name="game_character_info">%1$s\n\nYou are %2$s (%3$s)\n\n%4$s\n%5$s\nCharacters are\n%6$s\nPlayers are\n%7$s</string>

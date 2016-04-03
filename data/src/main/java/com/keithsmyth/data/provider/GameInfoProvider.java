@@ -177,9 +177,21 @@ public class GameInfoProvider {
         return new FirebaseCompletionWrapper<>(ref, null).updateChildren(newPlayerIdToNameMap);
     }
 
+    public Single<?> removePlayerToGame(String userId) {
+        final Firebase ref = firebaseFactory.getPlayersRef(getCurrentGameId());
+        final Map<String, Object> newPlayerIdToNameMap = new HashMap<>(1);
+        newPlayerIdToNameMap.put(userId, null);
+        return new FirebaseCompletionWrapper<>(ref, null).updateChildren(newPlayerIdToNameMap);
+    }
+
     public Single<?> setAssignedCharacters(Map<String, Object> mapPlayerIdToCharacter) {
         final Firebase ref = firebaseFactory.getAssignedCharactersRef(getCurrentGameId());
         return new FirebaseCompletionWrapper<>(ref, null).setValue(mapPlayerIdToCharacter);
+    }
+
+    public Single<?> setPlayerOrder(Map<String, Object> mapPlayerIdToOrder) {
+        final Firebase ref = firebaseFactory.getPlayerOrderRef(getCurrentGameId());
+        return new FirebaseCompletionWrapper<>(ref, null).setValue(mapPlayerIdToOrder);
     }
 
     public Observable<GameInfoDataModel> watchGameInfo() {

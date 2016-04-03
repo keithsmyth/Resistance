@@ -16,4 +16,6 @@ interface LobbyView {
     void removePlayer(PlayerDataModel playerDataModel);
 
     void showCharacters(List<CharacterViewModel> characters);
+
+    void allowPlayerAdmin();
 }

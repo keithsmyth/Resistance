@@ -1,5 +1,7 @@
 package com.keithsmyth.data.provider;
 
+import android.util.Log;
+
 import com.keithsmyth.data.model.CharacterDataModel;
 
 import java.util.Arrays;
@@ -8,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CharacterProvider {
+
+    private static final String TAG = "CharacterProvider";
 
     private static final CharacterDataModel MERLIN = new CharacterDataModel("Merlin", false) {
         @Override
@@ -139,6 +143,9 @@ public class CharacterProvider {
     }
 
     public CharacterDataModel getCharacter(String name) {
+        if (!mapCharacterNameToDataModel.containsKey(name)) {
+            Log.e(TAG, "Cannot map character " + name);
+        }
         return mapCharacterNameToDataModel.get(name);
     }
 }

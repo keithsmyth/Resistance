@@ -5,13 +5,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.keithsmyth.resistance.R;
 import com.keithsmyth.data.model.PlayerDataModel;
+import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.feature.lobby.model.CharacterViewModel;
+import com.keithsmyth.resistance.presentation.ItemTouchHelperCallback;
 import com.keithsmyth.resistance.presentation.PresenterDelegate;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class LobbyFragment extends Fragment implements LobbyView {
 
     private PresenterDelegate<LobbyView, LobbyPresenter> presenterDelegate;
     private PlayerAdapter playerAdapter;
+    private ItemTouchHelperCallback itemTouchHelperCallback;
     private RecyclerView charactersRecycler;
     private View startGameFab;
 
@@ -49,6 +52,9 @@ public class LobbyFragment extends Fragment implements LobbyView {
         playersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         playerAdapter = new PlayerAdapter();
         playersRecycler.setAdapter(playerAdapter);
+        itemTouchHelperCallback = new ItemTouchHelperCallback(playerAdapter);
+        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelperCallback);
+        itemTouchHelper.attachToRecyclerView(playersRecycler);
 
         charactersRecycler = (RecyclerView) view.findViewById(R.id.characters_recycler_view);
         startGameFab = view.findViewById(R.id.start_game_fab);
@@ -57,12 +63,14 @@ public class LobbyFragment extends Fragment implements LobbyView {
     @Override
     public void onResume() {
         super.onResume();
+        playerAdapter.setPlayerActionListener(new AdapterPlayerActions());
         presenterDelegate.onResume(this);
     }
 
     @Override
     public void onPause() {
         presenterDelegate.onPause();
+        playerAdapter.setPlayerActionListener(null);
         super.onPause();
     }
 
@@ -90,7 +98,7 @@ public class LobbyFragment extends Fragment implements LobbyView {
     public void showCharacters(List<CharacterViewModel> characters) {
         charactersRecycler.setHasFixedSize(true);
         charactersRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        final CharacterAdapter characterAdapter = new CharacterAdapter(presenterDelegate.presenter);
+        final CharacterAdapter characterAdapter = new CharacterAdapter(getContext(), presenterDelegate.presenter);
         characterAdapter.setItems(characters);
         charactersRecycler.setAdapter(characterAdapter);
         charactersRecycler.setVisibility(View.VISIBLE);
@@ -102,5 +110,24 @@ public class LobbyFragment extends Fragment implements LobbyView {
                 presenterDelegate.presenter.startGame();
             }
         });
+    }
+
+    @Override
+    public void allowPlayerAdmin() {
+        itemTouchHelperCallback.setLongPressDragEnabled(true);
+        itemTouchHelperCallback.setItemViewSwipeEnabled(true);
+    }
+
+    private class AdapterPlayerActions implements PlayerAdapter.PlayerActionListener {
+
+        @Override
+        public void onMovePlayer(int from, int to) {
+            presenterDelegate.presenter.changePlayerOrder(from, to);
+        }
+
+        @Override
+        public void onRemovePlayer(int position) {
+            presenterDelegate.presenter.removePlayer(position);
+        }
     }
 }

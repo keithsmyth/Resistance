@@ -1,20 +1,26 @@
 package com.keithsmyth.resistance.feature.lobby.presentation;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.keithsmyth.resistance.R;
 import com.keithsmyth.data.model.PlayerDataModel;
+import com.keithsmyth.resistance.R;
+import com.keithsmyth.resistance.presentation.ItemTouchHelperAdapter;
+import com.keithsmyth.resistance.presentation.ItemTouchViewHolder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder> {
+public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>
+    implements ItemTouchHelperAdapter {
 
     private final List<PlayerDataModel> items;
+    private PlayerActionListener playerActionListener;
 
     public PlayerAdapter() {
         items = new ArrayList<>();
@@ -36,6 +42,25 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
         return items.size();
     }
 
+    @Override
+    public boolean onItemMove(int from, int to) {
+        Collections.swap(items, from, to);
+        notifyItemMoved(from, to);
+        if (playerActionListener != null) {
+            playerActionListener.onMovePlayer(from, to);
+        }
+        return true;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        items.remove(position);
+        notifyItemRemoved(position);
+        if (playerActionListener != null) {
+            playerActionListener.onRemovePlayer(position);
+        }
+    }
+
     public void setItems(List<PlayerDataModel> items) {
         this.items.clear();
         this.items.addAll(items);
@@ -55,7 +80,12 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
         }
     }
 
-    public static class PlayerViewHolder extends RecyclerView.ViewHolder {
+    public void setPlayerActionListener(PlayerActionListener playerActionListener) {
+        this.playerActionListener = playerActionListener;
+    }
+
+    public static class PlayerViewHolder extends RecyclerView.ViewHolder
+        implements ItemTouchViewHolder {
 
         public final TextView nameText;
 
@@ -63,5 +93,22 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
             super(itemView);
             nameText = (TextView) itemView.findViewById(R.id.name_text);
         }
+
+        @Override
+        public void onItemDragStart() {
+            itemView.setBackgroundColor(Color.LTGRAY);
+        }
+
+        @Override
+        public void onItemDragEnd() {
+            itemView.setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
+    public interface PlayerActionListener {
+
+        void onMovePlayer(int from, int to);
+
+        void onRemovePlayer(int position);
     }
 }
