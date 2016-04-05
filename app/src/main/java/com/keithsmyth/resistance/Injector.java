@@ -11,6 +11,7 @@ import com.keithsmyth.data.provider.UserProvider;
 import com.keithsmyth.data.firebase.FirebaseFactory;
 import com.keithsmyth.data.prefs.SharedPreferencesWrapper;
 import com.keithsmyth.resistance.feature.game.domain.DisplayCharacterUseCase;
+import com.keithsmyth.resistance.feature.game.domain.GameStateUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.AddPlayerUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.SelectCharactersUseCase;
 import com.keithsmyth.resistance.feature.lobby.domain.StartGameUseCase;
@@ -130,5 +131,9 @@ public class Injector {
 
     public static StartGameUseCase startGameUseCase() {
         return new StartGameUseCase(gameInfoProvider(), gamePlayProvider());
+    }
+
+    public static GameStateUseCase gameStateUseCase() {
+        return new GameStateUseCase(gameInfoProvider(), gamePlayProvider());
     }
 }

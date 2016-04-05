@@ -7,7 +7,7 @@ public class GameRoundDataModel {
 
     private String captain;
     private int status;
-    private Map<String, String> mapPlayerIdForTeam;
+    private Map<String, Object> mapPlayerIdForTeam;
     private Map<String, Boolean> mapPlayerIdToVote;
     private Map<String, Boolean> mapPlayerIdToQuest;
 
@@ -27,11 +27,11 @@ public class GameRoundDataModel {
         this.status = status;
     }
 
-    public Map<String, String> getMapPlayerIdForTeam() {
+    public Map<String, Object> getMapPlayerIdForTeam() {
         return mapPlayerIdForTeam;
     }
 
-    public void setMapPlayerIdForTeam(Map<String, String> mapPlayerIdForTeam) {
+    public void setMapPlayerIdForTeam(Map<String, Object> mapPlayerIdForTeam) {
         this.mapPlayerIdForTeam = mapPlayerIdForTeam;
     }
 

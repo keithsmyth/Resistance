@@ -28,6 +28,8 @@
     <string name="game_character_team_mordred">Team Mordred (bad: %s players)</string>
     <string name="game_info_title">Info</string>
     <string name="game_id">Game # %s</string>
+    <string name="game_round">Round: %s</string>
+    <string name="game_captain">Captain: %s</string>
 
     <string name="good">Good</string>
     <string name="bad">Bad</string>

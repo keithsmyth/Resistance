@@ -13,6 +13,7 @@ import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.RxUtil;
 import com.keithsmyth.data.model.GameInfoDataModel;
 import com.keithsmyth.data.model.GamePlayDataModel;
+import com.keithsmyth.resistance.presentation.PresenterDelegate;
 
 import rx.Observable;
 import rx.Subscription;
@@ -20,18 +21,21 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
-public class GameFragment extends Fragment {
+public class GameFragment extends Fragment implements GameView {
+
+    private PresenterDelegate<GameView, GamePresenter> presenterDelegate;
 
     public static GameFragment create() {
         return new GameFragment();
     }
 
+    private TextView roundText;
     private TextView captainText;
-    private Subscription subscription;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        presenterDelegate = new PresenterDelegate<>(getLoaderManager(), getContext(), GamePresenter.FACTORY);
         getActivity().setTitle(R.string.game_title);
     }
 
@@ -45,37 +49,29 @@ public class GameFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        roundText = (TextView) view.findViewById(R.id.round_text);
         captainText = (TextView) view.findViewById(R.id.captain_text);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // TODO: kill this hack / move it into Presenters/UseCases etc
-        RxUtil.unsubscribe(subscription);
-        final Observable<GameInfoDataModel> gameInfoObservable = Injector.gameInfoProvider().getGameInfo().toObservable();
-        final Observable<GamePlayDataModel> gamePlayObservable = Injector.gamePlayProvider().watchGamePlay();
-        subscription = gameInfoObservable
-            .zipWith(gamePlayObservable, new Func2<GameInfoDataModel, GamePlayDataModel, Void>() {
-                @Override
-                public Void call(GameInfoDataModel gameInfoDataModel, GamePlayDataModel gamePlayDataModel) {
-                    onInfoAndPlayModelsReturned(gameInfoDataModel, gamePlayDataModel);
-                    return null;
-                }
-            })
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe();
+        presenterDelegate.onResume(this);
     }
 
     @Override
     public void onPause() {
-        RxUtil.unsubscribe(subscription);
+        presenterDelegate.onPause();
         super.onPause();
     }
 
-    private void onInfoAndPlayModelsReturned(GameInfoDataModel gameInfoDataModel, GamePlayDataModel gamePlayDataModel) {
-        final String captainUserId = gamePlayDataModel.getMapRoundNumberToRound().get("01").getCaptain();
-        captainText.setText(gameInfoDataModel.getMapPlayerIdToName().get(captainUserId) + " goes first");
+    @Override
+    public void setRound(int roundNumber) {
+        roundText.setText(getString(R.string.game_round, roundNumber));
+    }
+
+    @Override
+    public void setCaptain(String captain) {
+        captainText.setText(getString(R.string.game_captain, captain));
     }
 }
