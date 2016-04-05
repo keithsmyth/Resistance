@@ -13,17 +13,27 @@ public class MainActivity extends AppCompatActivity implements Nav {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, new GamesListFragment())
-                .commit();
+            open(new GamesListFragment());
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isGamesListFragmentOpen()) {
+            super.onBackPressed();
+        } else {
+            open(new GamesListFragment());
         }
     }
 
     @Override
     public void open(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .addToBackStack(null)
+            .replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName())
             .commit();
+    }
+
+    private boolean isGamesListFragmentOpen() {
+        return getSupportFragmentManager().findFragmentByTag(GamesListFragment.class.getSimpleName()) != null;
     }
 }
