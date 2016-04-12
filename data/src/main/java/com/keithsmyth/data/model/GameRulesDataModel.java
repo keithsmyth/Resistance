@@ -5,15 +5,19 @@ public class GameRulesDataModel {
     public final int totalGoodPlayers;
     public final int totalBadPlayers;
 
-    private final MissionRulesDataModel[] missionRulesDataModels;
+    private final RoundRulesDataModel[] roundRulesDataModels;
 
-    public GameRulesDataModel(int totalGoodPlayers, int totalBadPlayers, MissionRulesDataModel[] missionRulesDataModels) {
+    public GameRulesDataModel(int totalGoodPlayers, int totalBadPlayers, RoundRulesDataModel[] roundRulesDataModels) {
         this.totalGoodPlayers = totalGoodPlayers;
         this.totalBadPlayers = totalBadPlayers;
-        this.missionRulesDataModels = missionRulesDataModels;
+        this.roundRulesDataModels = roundRulesDataModels;
     }
 
-    public MissionRulesDataModel getMissionRulesDataModel(int missionNumber) {
-        return missionRulesDataModels[missionNumber - 1];
+    public RoundRulesDataModel getRoundRulesDataModel(int missionNumber) {
+        return roundRulesDataModels[missionNumber - 1];
+    }
+
+    public int getTotalRounds() {
+        return roundRulesDataModels.length;
     }
 }

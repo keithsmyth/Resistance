@@ -55,7 +55,7 @@ public class GamePresenter implements Presenter<GameView> {
                         @Override
                         public void call(GamePlayViewModel gamePlayViewModel) {
                             GamePresenter.this.gamePlayViewModel = gamePlayViewModel;
-                            displayCurrentRound(gamePlayViewModel);
+                            displayRounds(gamePlayViewModel);
                         }
                     }, new Action1<Throwable>() {
                         @Override
@@ -65,12 +65,13 @@ public class GamePresenter implements Presenter<GameView> {
                         }
                     });
         } else if (gamePlayViewModel != null) {
-            displayCurrentRound(gamePlayViewModel);
+            displayRounds(gamePlayViewModel);
         }
     }
 
-    private void displayCurrentRound(GamePlayViewModel gamePlayViewModel) {
+    private void displayRounds(GamePlayViewModel gamePlayViewModel) {
         final GameRoundViewModel currentRound = gamePlayViewModel.getCurrentRound();
+        gameView.setRounds(gamePlayViewModel.rounds);
         gameView.setRound(currentRound.roundNumber);
         gameView.setCaptain(currentRound.captainName);
     }

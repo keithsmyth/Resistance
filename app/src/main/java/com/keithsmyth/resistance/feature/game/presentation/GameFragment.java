@@ -3,6 +3,8 @@ package com.keithsmyth.resistance.feature.game.presentation;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +15,10 @@ import com.keithsmyth.resistance.R;
 import com.keithsmyth.resistance.RxUtil;
 import com.keithsmyth.data.model.GameInfoDataModel;
 import com.keithsmyth.data.model.GamePlayDataModel;
+import com.keithsmyth.resistance.feature.game.model.GameRoundViewModel;
 import com.keithsmyth.resistance.presentation.PresenterDelegate;
+
+import java.util.List;
 
 import rx.Observable;
 import rx.Subscription;
@@ -24,6 +29,7 @@ import rx.schedulers.Schedulers;
 public class GameFragment extends Fragment implements GameView {
 
     private PresenterDelegate<GameView, GamePresenter> presenterDelegate;
+    private RoundAdapter roundAdapter;
 
     public static GameFragment create() {
         return new GameFragment();
@@ -51,6 +57,11 @@ public class GameFragment extends Fragment implements GameView {
         super.onViewCreated(view, savedInstanceState);
         roundText = (TextView) view.findViewById(R.id.round_text);
         captainText = (TextView) view.findViewById(R.id.captain_text);
+        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.rounds_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setHasFixedSize(true);
+        roundAdapter = new RoundAdapter(getContext());
+        recyclerView.setAdapter(roundAdapter);
     }
 
     @Override
@@ -63,6 +74,11 @@ public class GameFragment extends Fragment implements GameView {
     public void onPause() {
         presenterDelegate.onPause();
         super.onPause();
+    }
+
+    @Override
+    public void setRounds(List<GameRoundViewModel> rounds) {
+        roundAdapter.setRounds(rounds);
     }
 
     @Override
